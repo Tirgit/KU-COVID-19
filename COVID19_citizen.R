@@ -136,8 +136,9 @@ results_sex <- results_sex %>%
 
 
 # barplots
-q <- ggplot(data = results, aes(x =variable , y = percent, fill = value)) +
+q <- ggplot(data = results, aes(x =variable , y = percent, fill = value, label = percent)) +
   geom_bar(stat="identity", width = 0.7) +
+  #geom_text(size = 2, position = position_stack(vjust = 0.5)) +
   coord_flip() +
   ylab("Percentage") + 
   xlab("Question") +
@@ -146,9 +147,10 @@ q <- ggplot(data = results, aes(x =variable , y = percent, fill = value)) +
   ggtitle("Citizen Science Survey Results") +
   theme(plot.title = element_text(size = 12, face = "bold",hjust = 0.5))
 
-qs <- ggplot(data = results_sex, aes(x =variable , y = percent, fill = value)) +
+qs <- ggplot(data = results_sex, aes(x =variable , y = percent, fill = value, label = percent)) +
   facet_wrap(~ Sex) +
   geom_bar(stat="identity", width = 0.7) +
+  #geom_text(size = 2, position = position_stack(vjust = 0.5)) +
   coord_flip() +
   ylab("Percentage") + 
   xlab("Question") +
@@ -166,5 +168,6 @@ qs
 dev.off()
 
 
-
++
+  geom_text(size = 3, position = position_stack(vjust = 0.5))
 
