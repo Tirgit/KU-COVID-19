@@ -142,10 +142,13 @@ q <- ggplot(data = results, aes(x =variable , y = percent, fill = value, label =
   coord_flip() +
   ylab("Percentage") + 
   xlab("Question") +
-  theme(axis.text=element_text(size=8),
-       axis.title=element_text(size=8,face="bold")) +
   ggtitle("Citizen Science Survey Results") +
-  theme(plot.title = element_text(size = 12, face = "bold",hjust = 0.5))
+  theme(axis.text=element_text(size=8),
+        axis.title=element_text(size=8,face="bold"),
+        plot.title = element_text(size = 12, face = "bold",hjust = 0.5),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank(), axis.line = element_line(colour = "black"))
+
 
 qs <- ggplot(data = results_sex, aes(x =variable , y = percent, fill = value, label = percent)) +
   facet_wrap(~ Sex) +
@@ -154,10 +157,14 @@ qs <- ggplot(data = results_sex, aes(x =variable , y = percent, fill = value, la
   coord_flip() +
   ylab("Percentage") + 
   xlab("Question") +
-  theme(axis.text=element_text(size=8),
-        axis.title=element_text(size=8,face="bold")) +
   ggtitle("Citizen Science Survey Results - sex stratified") +
-  theme(plot.title = element_text(size = 12, face = "bold",hjust = 0.5))
+  theme(axis.text=element_text(size=8),
+        axis.title=element_text(size=8,face="bold"),
+        plot.title = element_text(size = 12, face = "bold",hjust = 0.5),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank(), axis.line = element_line(colour = "black"),
+        strip.background = element_rect(fill="transparent"))
+
 
 pdf("/Users/med-tv_/Documents/Projects/Corona_SJPH/citizen_science_measures.pdf", width = 6, height = 3)
 q
@@ -168,6 +175,4 @@ qs
 dev.off()
 
 
-+
-  geom_text(size = 3, position = position_stack(vjust = 0.5))
 
