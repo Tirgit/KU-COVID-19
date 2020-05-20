@@ -1,14 +1,10 @@
 #### LOAD PACKAGES & SET WORKING DIRECTORY
 library(readxl)
 library(knitr)
-library(haven)
-library(radarchart)
-library(readxl)
-library(wesanderson)
 library(dplyr) 
 library(ggplot2) 
-library(GDAtools)
 library(tidyverse)
+library(lubridate)
 
 setwd("/Users/med-tv_/Dropbox/Data")
 
@@ -57,7 +53,7 @@ levels(d_con_selected$Sex)
 d_con_selected$Age <- as.numeric(d_con_selected$Age)
 d_con_selected$Age_cat <- "Under 30"
 d_con_selected$Age_cat[d_con_selected$Age >= 30 & d_con_selected$Age < 60] <- "Between 30 and 60"
-d_con_selected$Age_cat[d_con_selected$Age > 60] <- "Above 60"
+d_con_selected$Age_cat[d_con_selected$Age >= 60] <- "Above 60"
 d_con_selected$Age_cat <- as.factor(d_con_selected$Age_cat)
 d_con_selected$Education[d_con_selected$Education == "Andet, skriv:"] <- "Short-term education/Other"
 d_con_selected$Education[d_con_selected$Education == "Erhvervsuddannelse/faglært"] <- "Short-term education/Other"
@@ -96,35 +92,25 @@ d_con_selected$Lonely_high <- as.factor(d_con_selected$Lonely_high)
 d_con_selected$Worried <- NULL
 d_con_selected$Social_Isolation <- NULL
 d_con_selected$UCLA_loneliness <- NULL
-
-# calculate total numbers
-n_female <- as.numeric(table(d_con_selected$Sex)[1])
-n_male <- as.numeric(table(d_con_selected$Sex)[2])
-n_other <- as.numeric(table(d_con_selected$Sex)[3])
-n_under30 <- sum(d_con_selected$Age <30)
-n_30to60 <- sum(d_con_selected$Age >= 30 & d_con_selected$Age < 60)
-n_above60 <- sum(d_con_selected$Age >= 60)
-n_shortedu <- as.numeric(table(d_con_selected$Education)[3])
-n_midedu <- as.numeric(table(d_con_selected$Education)[2])
-n_longedu <- as.numeric(table(d_con_selected$Education)[1])
-n_chronic <- as.numeric(table(d_con_selected$Chronic_disease)[1])
-n_nochronic <- as.numeric(table(d_con_selected$Chronic_disease)[2])
-
 d_con_selected$Age <- NULL
 
 summary(d_con_selected)
 colnames(d_con_selected) <- c("Sex", "Education", "Chronic", "Age",
                               "Very isolated", "Very worried", "Very lonely")
 
+#load and merge Epinion
+epinion <- readRDS("/Users/med-tv_/Documents/Projects/Corona_SJPH/Epinion_bulk.rds")
+merged_data <- rbind(d_con_selected, epinion)
+
 # melting data
-d_con_melt <- as.data.frame(reshape2::melt(d_con_selected, id.var = c("Sex", "Age", 
+d_con_melt <- as.data.frame(reshape2::melt(merged_data, id.var = c("Sex", "Age", 
                                                                       "Education", 
                                                                       "Chronic")))
 #all
 results <- d_con_melt %>%
   group_by(variable, value) %>%
   summarise(total_n = n() ) %>%
-  mutate(countT = nrow(d_con)) %>%
+  mutate(countT = nrow(merged_data)) %>%
   mutate(percent = round(100*total_n/countT,2))
 results <- results[results$value == "Yes",] 
 results$Strata <- "All"
@@ -133,10 +119,10 @@ results$Strata <- "All"
 results_sex <- d_con_melt %>%
   group_by(variable, value, Sex) %>%
   summarise(total_n = n() )
-results_sex$countT <- numeric(nrow(results_sex))
-results_sex$countT[results_sex$Sex == "Female"] <- n_female
-results_sex$countT[results_sex$Sex == "Male"] <- n_male
-results_sex$countT[results_sex$Sex == "Other/Not specified"] <- n_other
+results_sex$countT <- c(0)
+for (i in unique(merged_data$Sex)) {
+  results_sex$countT[results_sex$Sex == i] <- sum(merged_data$Sex == i)
+}
 results_sex <- results_sex %>%
   mutate(percent = round(100*total_n/countT,2))
 results_sex <- results_sex[results_sex$value == "Yes",] 
@@ -148,10 +134,10 @@ results_sex$Sex <- NULL
 results_age <- d_con_melt %>%
   group_by(variable, value, Age) %>%
   summarise(total_n = n() )
-results_age$countT <- numeric(nrow(results_age))
-results_age$countT[results_age$Age == "Above 60"] <- n_above60
-results_age$countT[results_age$Age == "Between 30 and 60"] <- n_30to60
-results_age$countT[results_age$Age == "Under 30"] <- n_under30
+results_age$countT <- c(0)
+for (i in unique(merged_data$Age)) {
+  results_age$countT[results_age$Age == i] <- sum(merged_data$Age == i)
+}
 results_age <- results_age %>%
   mutate(percent = round(100*total_n/countT,2))
 results_age <- results_age[results_age$value == "Yes",] 
@@ -164,10 +150,10 @@ results_age$Age <- NULL
 results_educ <- d_con_melt %>%
   group_by(variable, value, Education) %>%
   summarise(total_n = n() )
-results_educ$countT <- numeric(nrow(results_educ))
-results_educ$countT[results_educ$Education == "Long-term education"] <- n_longedu
-results_educ$countT[results_educ$Education == "Middle-term education"] <- n_midedu
-results_educ$countT[results_educ$Education == "Short-term education/Other"] <- n_shortedu
+results_educ$countT <- c(0)
+for (i in unique(merged_data$Education)) {
+  results_educ$countT[results_educ$Education == i] <- sum(merged_data$Education == i)
+}
 results_educ <- results_educ %>%
   mutate(percent = round(100*total_n/countT,2))
 results_educ <- results_educ[results_educ$value == "Yes",] 
@@ -178,9 +164,10 @@ results_educ$Education <- NULL
 results_chron <- d_con_melt %>%
   group_by(variable, value, Chronic) %>%
   summarise(total_n = n() )
-results_chron$countT <- numeric(nrow(results_chron))
-results_chron$countT[results_chron$Chronic == "Chronic disease"] <- n_chronic
-results_chron$countT[results_chron$Chronic == "No chronic disease"] <- n_nochronic
+results_chron$countT <- c(0)
+for (i in unique(merged_data$Chronic)) {
+  results_chron$countT[results_chron$Chronic == i] <- sum(merged_data$Chronic == i)
+}
 results_chron <- results_chron %>%
   mutate(percent = round(100*total_n/countT,2))
 results_chron <- results_chron[results_chron$value == "Yes",] 
@@ -190,6 +177,7 @@ results_chron$Chronic <- NULL
 all_res <- rbind(results,results_sex,results_age,results_educ,results_chron)
 all_res$barcolor <- "blue"
 all_res$barcolor[all_res$Strata == "All"] <- "red"
+all_res <- all_res[all_res$Strata != "Other/Not specified",]
 res_isolated <- all_res[all_res$variable == "Very isolated",] 
 res_worry <- all_res[all_res$variable == "Very worried",] 
 res_lonely <- all_res[all_res$variable == "Very lonely",] 
@@ -227,9 +215,9 @@ q <- ggplot(data = res_lonely, aes(x = reorder(Strata, percent), y = percent, fi
   #theme(plot.title = element_text(size = 12, face = "bold",hjust = 0.5)) +
   theme(legend.position = "none") +
   theme(axis.text.x = element_text(face = c('plain','plain','plain','plain','plain',
-                                            'bold','plain','plain','plain','plain',
+                                            'plain','bold','plain','plain','plain',
                                             'plain','plain'))) +
-  theme(axis.text.x = element_text(size = c(8,8,8,8,8,12,8,8,8,8,8,8))) 
+  theme(axis.text.x = element_text(size = c(8,8,8,8,8,8,12,8,8,8,8,8))) 
 #scale_x_discrete(labels=c("All"=expression(bold("All")), parse=TRUE))
 
 
