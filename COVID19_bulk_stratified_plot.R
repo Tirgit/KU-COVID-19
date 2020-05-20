@@ -13,7 +13,7 @@ library(tidyverse)
 setwd("/Users/med-tv_/Dropbox/Data")
 
 #### LOAD LATEST CITIZEN SCIENCE DATA
-d_con <- read_excel("Data stripped of free text/KUSUND_2004_AJM.xlsx")
+d_con <- read_excel("Data stripped of free text/KUSUND_1805_AJM.xlsx")
 d_con_q <- d_con[1,] # We save the questions in another data set
 d_con <- d_con[-1,] # Removing the line with the questions
 d_con$date <- as.Date(as.numeric(d_con$DataCollection_StartTime_Exported), origin = "1899-12-30")
@@ -107,8 +107,8 @@ n_above60 <- sum(d_con_selected$Age >= 60)
 n_shortedu <- as.numeric(table(d_con_selected$Education)[3])
 n_midedu <- as.numeric(table(d_con_selected$Education)[2])
 n_longedu <- as.numeric(table(d_con_selected$Education)[1])
-n_chronic <- as.numeric(table(d_con_selected$Chronic)[1])
-n_nochronic <- as.numeric(table(d_con_selected$Chronic)[2])
+n_chronic <- as.numeric(table(d_con_selected$Chronic_disease)[1])
+n_nochronic <- as.numeric(table(d_con_selected$Chronic_disease)[2])
 
 d_con_selected$Age <- NULL
 
@@ -124,7 +124,7 @@ d_con_melt <- as.data.frame(reshape2::melt(d_con_selected, id.var = c("Sex", "Ag
 results <- d_con_melt %>%
   group_by(variable, value) %>%
   summarise(total_n = n() ) %>%
-  mutate(countT = 11356) %>%
+  mutate(countT = nrow(d_con)) %>%
   mutate(percent = round(100*total_n/countT,2))
 results <- results[results$value == "Yes",] 
 results$Strata <- "All"
@@ -188,61 +188,58 @@ results_chron$Strata <- as.character(results_chron$Chronic)
 results_chron$Chronic <- NULL
 
 all_res <- rbind(results,results_sex,results_age,results_educ,results_chron)
-res_isolated <- all_res[results_chron$value == "Yes",] 
-res_worry
-res_lonely
+all_res$barcolor <- "blue"
+all_res$barcolor[all_res$Strata == "All"] <- "red"
+res_isolated <- all_res[all_res$variable == "Very isolated",] 
+res_worry <- all_res[all_res$variable == "Very worried",] 
+res_lonely <- all_res[all_res$variable == "Very lonely",] 
 
-
-ggplot(data = results_sex_yes, aes(x = fct_rev(variable) , y = percent, fill = Sex)) +
+#social isolation plot
+p <- ggplot(data = res_isolated, aes(x = reorder(Strata, percent), y = percent, fill = barcolor)) +
   geom_bar(stat="identity", width = 0.7) +
-  xlab("Worries") +
-  theme(axis.text=element_text(size=8),
-        axis.title=element_text(size=8,face="bold")) +
-  theme(axis.title.x=element_blank(),
-        axis.text.x=element_blank(),
-        axis.ticks.x=element_blank()) +
-  #ggtitle("Citizen Science, Worries and Precautions") +
+  xlab("Isolation") +
+  theme(axis.title=element_text(size=8,face="bold"),
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        axis.title.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        plot.title = element_text(hjust = 0.5)) +
+  scale_y_continuous(limits = c(0,55), expand = c(0, 0)) +
+  ggtitle("Proportion of individuals with high levels of social isolation") +
   #theme(plot.title = element_text(size = 12, face = "bold",hjust = 0.5)) +
-  theme(legend.position = "none")
+  theme(legend.position = "none") +
+  theme(axis.text.x = element_text(face = c('plain','plain','plain','plain','plain',
+                                            'plain','bold','plain','plain','plain',
+                                            'plain','plain'))) +
+  theme(axis.text.x = element_text(size = c(8,8,8,8,8,8,12,8,8,8,8,8))) 
+  #scale_x_discrete(labels=c("All"=expression(bold("All")), parse=TRUE))
 
-
-# barplots
-q <- ggplot(data = results, aes(x =variable , y = percent, fill = value, label = percent)) +
+#loneliness plot
+q <- ggplot(data = res_lonely, aes(x = reorder(Strata, percent), y = percent, fill = barcolor)) +
   geom_bar(stat="identity", width = 0.7) +
-  #geom_text(size = 2, position = position_stack(vjust = 0.5)) +
-  coord_flip() +
-  ylab("Percentage") + 
-  xlab("Question") +
-  ggtitle("Citizen Science Survey Results") +
-  theme(axis.text=element_text(size=8),
-        axis.title=element_text(size=8,face="bold"),
-        plot.title = element_text(size = 12, face = "bold",hjust = 0.5),
-        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-        panel.background = element_blank(), axis.line = element_line(colour = "black"))
+  xlab("Isolation") +
+  theme(axis.title=element_text(size=8,face="bold"),
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        axis.title.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        plot.title = element_text(hjust = 0.5)) +
+  scale_y_continuous(limits = c(0,30), expand = c(0, 0)) +
+  ggtitle("Proportion of individuals with high levels of loneliness") +
+  #theme(plot.title = element_text(size = 12, face = "bold",hjust = 0.5)) +
+  theme(legend.position = "none") +
+  theme(axis.text.x = element_text(face = c('plain','plain','plain','plain','plain',
+                                            'bold','plain','plain','plain','plain',
+                                            'plain','plain'))) +
+  theme(axis.text.x = element_text(size = c(8,8,8,8,8,12,8,8,8,8,8,8))) 
+#scale_x_discrete(labels=c("All"=expression(bold("All")), parse=TRUE))
 
 
-qs <- ggplot(data = results_sex, aes(x =variable , y = percent, fill = value, label = percent)) +
-  facet_wrap(~ Sex) +
-  geom_bar(stat="identity", width = 0.7) +
-  #geom_text(size = 2, position = position_stack(vjust = 0.5)) +
-  coord_flip() +
-  ylab("Percentage") + 
-  xlab("Question") +
-  ggtitle("Citizen Science Survey Results - sex stratified") +
-  theme(axis.text=element_text(size=8),
-        axis.title=element_text(size=8,face="bold"),
-        plot.title = element_text(size = 12, face = "bold",hjust = 0.5),
-        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-        panel.background = element_blank(), axis.line = element_line(colour = "black"),
-        strip.background = element_rect(fill="transparent"))
 
-
-pdf("/Users/med-tv_/Documents/Projects/Corona_SJPH/citizen_science_measures.pdf", width = 6, height = 3)
-q
+pdf("/Users/med-tv_/Documents/Projects/Corona_SJPH/Bulk_stratified_isolation.pdf", width = 6, height = 3)
+p
 dev.off()
 
-pdf("/Users/med-tv_/Documents/Projects/Corona_SJPH/citizen_science_measures_sex.pdf", width = 6, height = 3)
-qs
+pdf("/Users/med-tv_/Documents/Projects/Corona_SJPH/Bulk_stratified_loneliness.pdf", width = 6, height = 3)
+q
 dev.off()
 
 

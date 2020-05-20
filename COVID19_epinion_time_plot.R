@@ -11,6 +11,15 @@ library(GDAtools)
 library(tidyverse)
 library(lubridate)
 
+#run shared .Rmd file until load of these 3 are done and save
+#saveRDS(d_pop, "/Users/med-tv_/Documents/Projects/Corona_SJPH/d_pop.rds")
+#saveRDS(d_fam, "/Users/med-tv_/Documents/Projects/Corona_SJPH/d_fam.rds")
+#saveRDS(d_eld, "/Users/med-tv_/Documents/Projects/Corona_SJPH/d_eld.rds")
+
+d_pop <- readRDS("/Users/med-tv_/Documents/Projects/Corona_SJPH/d_pop.rds")
+d_fam <- readRDS("/Users/med-tv_/Documents/Projects/Corona_SJPH/d_fam.rds")
+d_eld <- readRDS("/Users/med-tv_/Documents/Projects/Corona_SJPH/d_eld.rds")
+
 setwd("/Users/med-tv_/Dropbox/Data")
 
 #### LOAD LATEST CITIZEN SCIENCE DATA
