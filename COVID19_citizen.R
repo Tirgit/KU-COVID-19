@@ -38,13 +38,14 @@ d_con$q16_2_num <-recode(d_con$q16_2_resp, 'Næsten aldrig eller aldrig'=1, 'Nog
 d_con$q16_3_num <-recode(d_con$q16_3_resp, 'Næsten aldrig eller aldrig'=1, 'Noget af tiden'=2, 'Ofte'=3)
 d_con$q16_sum <- d_con$q16_1_num + d_con$q16_2_num + d_con$q16_3_num
 
+
 ### removing not needed variables
-varkeep <- c("q1", "q2", "q5", "q15", "q16_sum", "q18", "q20", "date")
+varkeep <- c("q1", "q2", "q5", "q12", "q15", "q16_sum", "q20")
 
 d_con_selected = subset(d_con, select = varkeep )
-colnames(d_con_selected) <- c("Sex", "Age", "Education", "Social_Isolation",
-                              "Loneliness", "Quality_of_Life",
-                              "Worried", "Date")
+colnames(d_con_selected) <- c("Sex", "Age", "Education", "Chronic_disease",
+                              "Social_Isolation", "UCLA_loneliness","Worried")
+
 # recode variables
 table(d_con_selected$Sex)
 d_con_selected$Sex[d_con_selected$Sex == "Mand"] <- "Male"
@@ -53,12 +54,11 @@ d_con_selected$Sex[d_con_selected$Sex == "Andet"] <- "Other/Not specified"
 d_con_selected$Sex[d_con_selected$Sex == "Ønsker ikke at oplyse"] <- "Other/Not specified"
 d_con_selected$Sex <- as.factor(d_con_selected$Sex)
 levels(d_con_selected$Sex)
-sextable <- table(d_con_selected$Sex)
-n_female <- as.numeric(sextable[1])
-n_male <- as.numeric(sextable[2])
-n_other <- as.numeric(sextable[3])
 d_con_selected$Age <- as.numeric(d_con_selected$Age)
-#table(d_con_selected$Education)
+d_con_selected$Age_cat <- "Under 30"
+d_con_selected$Age_cat[d_con_selected$Age >= 30 & d_con_selected$Age < 60] <- "Between 30 and 60"
+d_con_selected$Age_cat[d_con_selected$Age > 60] <- "Above 60"
+d_con_selected$Age_cat <- as.factor(d_con_selected$Age_cat)
 d_con_selected$Education[d_con_selected$Education == "Andet, skriv:"] <- "Short-term education/Other"
 d_con_selected$Education[d_con_selected$Education == "Erhvervsuddannelse/faglært"] <- "Short-term education/Other"
 d_con_selected$Education[d_con_selected$Education == "Folkeskole"] <- "Short-term education/Other"
@@ -67,72 +67,143 @@ d_con_selected$Education[d_con_selected$Education == "Kort videregående uddanne
 d_con_selected$Education[d_con_selected$Education == "Mellemlang videregående uddannelse"] <- "Middle-term education"
 d_con_selected$Education[d_con_selected$Education == "Lang videregående uddannelse"] <- "Long-term education"
 d_con_selected$Education <- as.factor(d_con_selected$Education)
+table(d_con_selected$Chronic_disease)
+d_con_selected$Chronic_disease[d_con_selected$Chronic_disease == "Nej"] <- "No chronic disease"
+d_con_selected$Chronic_disease[d_con_selected$Chronic_disease == "Ja"] <- "Chronic disease"
+d_con_selected$Chronic_disease <- as.factor(d_con_selected$Chronic_disease)
+levels(d_con_selected$Chronic_disease)
 
 # recode extremes
 d_con_selected$Social_Isolation[d_con_selected$Social_Isolation == "1 – Slet ikke"] <- "1"
 d_con_selected$Social_Isolation[d_con_selected$Social_Isolation == "10 – Fuldstændigt"] <- "10"
 d_con_selected$Social_Isolation <- as.numeric(d_con_selected$Social_Isolation)
 
-d_con_selected$Quality_of_Life[d_con_selected$Quality_of_Life == "1 – Dårlig"] <- "1"
-d_con_selected$Quality_of_Life[d_con_selected$Quality_of_Life == "10 - Fremragende"] <- "10"
-d_con_selected$Quality_of_Life <- as.numeric(d_con_selected$Quality_of_Life)
-
 d_con_selected$Worried[d_con_selected$Worried == "1 – Ikke bekymret"] <- "1"
 d_con_selected$Worried[d_con_selected$Worried == "10 – Meget bekymret"] <- "10"
 d_con_selected$Worried <- as.numeric(d_con_selected$Worried)
 
+# categorize worries and isolation
+d_con_selected$Social_Isolation_high <- "No"
+d_con_selected$Worries_high <- "No"
+d_con_selected$Lonely_high <- "No"
+d_con_selected$Social_Isolation_high[d_con_selected$Social_Isolation > 6] <- "Yes"
+d_con_selected$Worries_high[d_con_selected$Worried > 6] <- "Yes"
+d_con_selected$Lonely_high[d_con_selected$UCLA_loneliness > 6] <- "Yes"
+d_con_selected$Social_Isolation_high <- as.factor(d_con_selected$Social_Isolation_high)
+d_con_selected$Worries_high <- as.factor(d_con_selected$Worries_high)
+d_con_selected$Lonely_high <- as.factor(d_con_selected$Lonely_high)
+
+d_con_selected$Worried <- NULL
+d_con_selected$Social_Isolation <- NULL
+d_con_selected$UCLA_loneliness <- NULL
+
+# calculate total numbers
+n_female <- as.numeric(table(d_con_selected$Sex)[1])
+n_male <- as.numeric(table(d_con_selected$Sex)[2])
+n_other <- as.numeric(table(d_con_selected$Sex)[3])
+n_under30 <- sum(d_con_selected$Age <30)
+n_30to60 <- sum(d_con_selected$Age >= 30 & d_con_selected$Age < 60)
+n_above60 <- sum(d_con_selected$Age >= 60)
+n_shortedu <- as.numeric(table(d_con_selected$Education)[3])
+n_midedu <- as.numeric(table(d_con_selected$Education)[2])
+n_longedu <- as.numeric(table(d_con_selected$Education)[1])
+n_chronic <- as.numeric(table(d_con_selected$Chronic)[1])
+n_nochronic <- as.numeric(table(d_con_selected$Chronic)[2])
+
+d_con_selected$Age <- NULL
+
 summary(d_con_selected)
-
-# reverse quality of life
-d_con_selected$Rev_Quality_of_Life <- 11 - d_con_selected$Quality_of_Life
-
-# convert loneliness to a scale 1-10
-d_con_selected$Loneliness_recode <- NULL
-d_con_selected$Loneliness_recode[d_con_selected$Loneliness == 3] <- 1
-d_con_selected$Loneliness_recode[d_con_selected$Loneliness == 4] <- 2.5
-d_con_selected$Loneliness_recode[d_con_selected$Loneliness == 5] <- 4
-d_con_selected$Loneliness_recode[d_con_selected$Loneliness == 6] <- 5.5
-d_con_selected$Loneliness_recode[d_con_selected$Loneliness == 7] <- 7
-d_con_selected$Loneliness_recode[d_con_selected$Loneliness == 8] <- 8.5
-d_con_selected$Loneliness_recode[d_con_selected$Loneliness == 9] <- 10
-
-# now worries, loneliness and quality are coded the same
-summary(d_con_selected)
-d_con_selected$Quality_of_Life <- NULL
-d_con_selected$Loneliness <- NULL
-d_con_selected$Date <- NULL
-
-colnames(d_con_selected) <- c("Sex", "Age", "Education","Social Isolation",
-                              "Worries", "Quality of Life",
-                              "Loneliness")
+colnames(d_con_selected) <- c("Sex", "Education", "Chronic", "Age",
+                              "Very isolated", "Very worried", "Very lonely")
 
 # melting data
-d_con_melt <- as.data.frame(reshape2::melt(d_con_selected, id.var = c("Sex", "Age", "Education")))
-
-# all population means box and violin plots
-tryp <- ggplot(data = d_con_melt, aes(x=variable, y=value)) +
-  geom_violin() # can be changed to geom_boxplot()
-pdf("/Users/med-tv_/Documents/Projects/Corona_SJPH/citizen_science_measures_box.pdf", width = 6, height = 3)
-tryp
-dev.off()
-
+d_con_melt <- as.data.frame(reshape2::melt(d_con_selected, id.var = c("Sex", "Age", 
+                                                                      "Education", 
+                                                                      "Chronic")))
+#all
 results <- d_con_melt %>%
   group_by(variable, value) %>%
   summarise(total_n = n() ) %>%
   mutate(countT = 11356) %>%
   mutate(percent = round(100*total_n/countT,2))
+results <- results[results$value == "Yes",] 
+results$Strata <- "All"
 
+#sex stratified
 results_sex <- d_con_melt %>%
   group_by(variable, value, Sex) %>%
   summarise(total_n = n() )
-
 results_sex$countT <- numeric(nrow(results_sex))
 results_sex$countT[results_sex$Sex == "Female"] <- n_female
 results_sex$countT[results_sex$Sex == "Male"] <- n_male
 results_sex$countT[results_sex$Sex == "Other/Not specified"] <- n_other
-
 results_sex <- results_sex %>%
   mutate(percent = round(100*total_n/countT,2))
+results_sex <- results_sex[results_sex$value == "Yes",] 
+results_sex$Sex <- as.character(results_sex$Sex)
+results_sex$Strata <- as.character(results_sex$Sex)
+results_sex$Sex <- NULL
+
+#age stratified
+results_age <- d_con_melt %>%
+  group_by(variable, value, Age) %>%
+  summarise(total_n = n() )
+results_age$countT <- numeric(nrow(results_age))
+results_age$countT[results_age$Age == "Above 60"] <- n_above60
+results_age$countT[results_age$Age == "Between 30 and 60"] <- n_30to60
+results_age$countT[results_age$Age == "Under 30"] <- n_under30
+results_age <- results_age %>%
+  mutate(percent = round(100*total_n/countT,2))
+results_age <- results_age[results_age$value == "Yes",] 
+results_age$Age <- as.character(results_age$Age)
+results_age$Strata <- as.character(results_age$Age)
+results_age$Age <- NULL
+
+
+#educ stratified
+results_educ <- d_con_melt %>%
+  group_by(variable, value, Education) %>%
+  summarise(total_n = n() )
+results_educ$countT <- numeric(nrow(results_educ))
+results_educ$countT[results_educ$Education == "Long-term education"] <- n_longedu
+results_educ$countT[results_educ$Education == "Middle-term education"] <- n_midedu
+results_educ$countT[results_educ$Education == "Short-term education/Other"] <- n_shortedu
+results_educ <- results_educ %>%
+  mutate(percent = round(100*total_n/countT,2))
+results_educ <- results_educ[results_educ$value == "Yes",] 
+results_educ$Strata <- as.character(results_educ$Education)
+results_educ$Education <- NULL
+
+#chronic stratified
+results_chron <- d_con_melt %>%
+  group_by(variable, value, Chronic) %>%
+  summarise(total_n = n() )
+results_chron$countT <- numeric(nrow(results_chron))
+results_chron$countT[results_chron$Chronic == "Chronic disease"] <- n_chronic
+results_chron$countT[results_chron$Chronic == "No chronic disease"] <- n_nochronic
+results_chron <- results_chron %>%
+  mutate(percent = round(100*total_n/countT,2))
+results_chron <- results_chron[results_chron$value == "Yes",] 
+results_chron$Strata <- as.character(results_chron$Chronic)
+results_chron$Chronic <- NULL
+
+all_res <- rbind(results,results_sex,results_age,results_educ,results_chron)
+res_isolated <- all_res[results_chron$value == "Yes",] 
+res_worry
+res_lonely
+
+
+ggplot(data = results_sex_yes, aes(x = fct_rev(variable) , y = percent, fill = Sex)) +
+  geom_bar(stat="identity", width = 0.7) +
+  xlab("Worries") +
+  theme(axis.text=element_text(size=8),
+        axis.title=element_text(size=8,face="bold")) +
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank()) +
+  #ggtitle("Citizen Science, Worries and Precautions") +
+  #theme(plot.title = element_text(size = 12, face = "bold",hjust = 0.5)) +
+  theme(legend.position = "none")
 
 
 # barplots
@@ -173,6 +244,5 @@ dev.off()
 pdf("/Users/med-tv_/Documents/Projects/Corona_SJPH/citizen_science_measures_sex.pdf", width = 6, height = 3)
 qs
 dev.off()
-
 
 
