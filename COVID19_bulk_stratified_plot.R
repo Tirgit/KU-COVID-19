@@ -175,8 +175,8 @@ results_chron$Strata <- as.character(results_chron$Chronic)
 results_chron$Chronic <- NULL
 
 all_res <- rbind(results,results_sex,results_age,results_educ,results_chron)
-all_res$barcolor <- "blue"
-all_res$barcolor[all_res$Strata == "All"] <- "red"
+all_res$barcolor <- "red"
+all_res$barcolor[all_res$Strata == "All"] <- "blue"
 all_res <- all_res[all_res$Strata != "Other/Not specified",]
 res_isolated <- all_res[all_res$variable == "Very isolated",] 
 res_worry <- all_res[all_res$variable == "Very worried",] 
@@ -190,7 +190,11 @@ p <- ggplot(data = res_isolated, aes(x = reorder(Strata, percent), y = percent, 
         axis.text.x = element_text(angle = 45, hjust = 1),
         axis.title.x=element_blank(),
         axis.ticks.x=element_blank(),
-        plot.title = element_text(hjust = 0.5)) +
+        plot.title = element_text(hjust = 0.5),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black")) +
   scale_y_continuous(limits = c(0,55), expand = c(0, 0)) +
   ggtitle("Proportion of individuals with high levels of social isolation") +
   #theme(plot.title = element_text(size = 12, face = "bold",hjust = 0.5)) +
@@ -209,7 +213,11 @@ q <- ggplot(data = res_lonely, aes(x = reorder(Strata, percent), y = percent, fi
         axis.text.x = element_text(angle = 45, hjust = 1),
         axis.title.x=element_blank(),
         axis.ticks.x=element_blank(),
-        plot.title = element_text(hjust = 0.5)) +
+        plot.title = element_text(hjust = 0.5),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black")) +
   scale_y_continuous(limits = c(0,30), expand = c(0, 0)) +
   ggtitle("Proportion of individuals with high levels of loneliness") +
   #theme(plot.title = element_text(size = 12, face = "bold",hjust = 0.5)) +

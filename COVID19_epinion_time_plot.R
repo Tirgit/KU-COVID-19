@@ -143,7 +143,11 @@ p <- ggplot(data = res_worry, aes(x = Date, y = percent, fill = "red")) +
         axis.text.x = element_text(angle = 45, hjust = 1),
         axis.title.x=element_blank(),
         axis.ticks.x=element_blank(),
-        plot.title = element_text(hjust = 0.5)) +
+        plot.title = element_text(hjust = 0.5),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black")) +
   scale_y_continuous(limits = c(0,70), expand = c(0, 0)) +
   expand_limits(x = as.Date(c("2020-02-28", "2020-05-17"))) +
   ggtitle("Proportion of individuals who are very worried about the crisis") +

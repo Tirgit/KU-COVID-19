@@ -92,7 +92,11 @@ p1 <- ggplot(data = results_worries, aes(x = fct_rev(variable) , y = percent, fi
         axis.title=element_text(size=8,face="bold")) +
   theme(axis.title.x=element_blank(),
         axis.text.x=element_blank(),
-        axis.ticks.x=element_blank()) +
+        axis.ticks.x=element_blank(),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black")) +
   #ggtitle("Citizen Science, Worries and Precautions") +
   #theme(plot.title = element_text(size = 12, face = "bold",hjust = 0.5)) +
   theme(legend.position = "none")
@@ -103,7 +107,11 @@ p2 <- ggplot(data = results_precautions, aes(x = fct_rev(variable) , y = percent
   ylab("Percentage") + 
   xlab("Precautions") +
   theme(axis.text=element_text(size=8),
-        axis.title=element_text(size=8,face="bold")) +
+        axis.title=element_text(size=8,face="bold"),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black")) +
   theme(legend.position = "none")
 
 gp1 <- ggplotGrob(p1)
