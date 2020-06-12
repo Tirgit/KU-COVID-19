@@ -6,7 +6,7 @@ library(ggplot2)
 library(tidyverse)
 library(lubridate)
 
-setwd("/Users/med-tv_/Dropbox/Data")
+setwd("C:/Users/vrw657/Dropbox/Data")
 
 #### LOAD LATEST CITIZEN SCIENCE DATA
 d_con <- read_excel("Data stripped of free text/KUSUND_1805_AJM.xlsx")
@@ -24,7 +24,7 @@ p <- ggplot(datecoll, aes(Date, Participants)) +
   ggtitle("Citizen Science reports per day") + 
   theme(plot.title = element_text(hjust = 0.5))
 
-pdf("/Users/med-tv_/Documents/Projects/Corona_SJPH/citizen_science_reps.pdf", width = 6, height = 3)
+pdf("C:/Users/vrw657/Documents/Projects/Corona_SJPH/citizen_science_reps.pdf", width = 6, height = 3)
 p
 dev.off()
 
@@ -99,7 +99,7 @@ colnames(d_con_selected) <- c("Sex", "Education", "Chronic", "Age",
                               "Very isolated", "Very worried", "Very lonely")
 
 #load and merge Epinion
-epinion <- readRDS("/Users/med-tv_/Documents/Projects/Corona_SJPH/Epinion_bulk.rds")
+epinion <- readRDS("C:/Users/vrw657/Documents/Projects/Corona_SJPH/Epinion_bulk.rds")
 merged_data <- rbind(d_con_selected, epinion)
 
 # melting data
@@ -230,11 +230,11 @@ q <- ggplot(data = res_lonely, aes(x = reorder(Strata, percent), y = percent, fi
 
 
 
-pdf("/Users/med-tv_/Documents/Projects/Corona_SJPH/Bulk_stratified_isolation.pdf", width = 6, height = 3)
+pdf("C:/Users/vrw657/Documents/Projects/Corona_SJPH/Bulk_stratified_isolation.pdf", width = 6, height = 3)
 p
 dev.off()
 
-pdf("/Users/med-tv_/Documents/Projects/Corona_SJPH/Bulk_stratified_loneliness.pdf", width = 6, height = 3)
+pdf("C:/Users/vrw657/Documents/Projects/Corona_SJPH/Bulk_stratified_loneliness.pdf", width = 6, height = 3)
 q
 dev.off()
 

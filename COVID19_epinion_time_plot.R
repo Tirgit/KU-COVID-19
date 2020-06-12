@@ -1,19 +1,19 @@
 #### LOAD PACKAGES & SET WORKING DIRECTORY
 library(knitr)
 library(dplyr) 
-library(ggplot2) 
+library(ggplot2)
 library(tidyverse)
 library(lubridate)
 
 # run shared .Rmd file until load of these 3 are done and save
-#saveRDS(d_pop, "/Users/med-tv_/Documents/Projects/Corona_SJPH/d_pop.rds")
-#saveRDS(d_fam, "/Users/med-tv_/Documents/Projects/Corona_SJPH/d_fam.rds")
-#saveRDS(d_eld, "/Users/med-tv_/Documents/Projects/Corona_SJPH/d_eld.rds")
+#saveRDS(d_pop, "C:/Users/vrw657/Documents/Projects/Corona_SJPH/d_pop.rds")
+#saveRDS(d_fam, "C:/Users/vrw657/Documents/Projects/Corona_SJPH/d_fam.rds")
+#saveRDS(d_eld, "C:/Users/vrw657/Documents/Projects/Corona_SJPH/d_eld.rds")
 
 # merging 3 datasets
-d_pop <- readRDS("/Users/med-tv_/Documents/Projects/Corona_SJPH/d_pop.rds")
-d_fam <- readRDS("/Users/med-tv_/Documents/Projects/Corona_SJPH/d_fam.rds")
-d_eld <- readRDS("/Users/med-tv_/Documents/Projects/Corona_SJPH/d_eld.rds")
+d_pop <- readRDS("C:/Users/vrw657/Documents/Projects/Corona_SJPH/d_pop.rds")
+d_fam <- readRDS("C:/Users/vrw657/Documents/Projects/Corona_SJPH/d_fam.rds")
+d_eld <- readRDS("C:/Users/vrw657/Documents/Projects/Corona_SJPH/d_eld.rds")
 
 varkeep <- c("q1", "q2", "q5", "q12", "q15", "q16_1_resp",
              "q16_2_resp", "q16_3_resp", "q20", "date")
@@ -109,7 +109,7 @@ colnames(d_con_selected) <- c("Sex", "Education", "Chronic", "Date", "Age",
 #col_order <- c("Sex", "Age", "Education", "Chronic", 
 #               "Very isolated", "Very worried", "Very lonely")
 #d_con_bulkmerge <- d_con_bulkmerge[, col_order]
-#saveRDS(d_con_bulkmerge, "/Users/med-tv_/Documents/Projects/Corona_SJPH/Epinion_bulk.rds")
+#saveRDS(d_con_bulkmerge, "C:/Users/vrw657/Documents/Projects/Corona_SJPH/Epinion_bulk.rds")
 
 d_con_selected$Sex <- NULL
 d_con_selected$Education <- NULL
@@ -154,7 +154,7 @@ p <- ggplot(data = res_worry, aes(x = Date, y = percent, fill = "red")) +
   #theme(plot.title = element_text(size = 12, face = "bold",hjust = 0.5)) +
   theme(legend.position = "none") 
 
-pdf("/Users/med-tv_/Documents/Projects/Corona_SJPH/Epinion_worry_time.pdf", width = 9, height = 3)
+pdf("C:/Users/vrw657/Documents/Projects/Corona_SJPH/Epinion_worry_time.pdf", width = 9, height = 3)
 p
 dev.off()
 

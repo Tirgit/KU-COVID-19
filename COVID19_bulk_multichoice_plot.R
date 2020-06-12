@@ -11,7 +11,7 @@ library(GDAtools)
 library(tidyverse)
 library(gridExtra)
 
-setwd("/Users/med-tv_/Dropbox/Data")
+setwd("C:/Users/vrw657/Dropbox/Data")
 
 #### LOAD LATEST CITIZEN SCIENCE DATA
 d_con <- read_excel("Data stripped of free text/KUSUND_2004_AJM.xlsx")
@@ -124,7 +124,7 @@ gp2$widths[2:5] <- as.list(maxWidth)
 title1 <- grid::textGrob("Worries and Precautions in the Citizen Science cohort", gp=grid::gpar(fontsize=12,font=1))
 grid.arrange(gp1, gp2, nrow = 2, ncol=1, heights=c(2,2), top=title1)
 
-pdf("/Users/med-tv_/Documents/Projects/Corona_SJPH/citizen_science_multicat.pdf", width = 6, height = 6)
+pdf("C:/Users/vrw657/Documents/Projects/Corona_SJPH/citizen_science_multicat.pdf", width = 6, height = 6)
 grid.arrange(gp1, gp2, nrow = 2, ncol=1, heights=c(2,2), top=title1)
 dev.off()
 
