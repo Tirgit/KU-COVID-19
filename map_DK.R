@@ -32,7 +32,8 @@ for (i in (unique(polling_zip$Afstem))) {
 }
 
 polling_zip <- polling_zip[!is.na(polling_zip$Afstem),]
-
+polling_zip$ZIP <- as.character(polling_zip$ZIP)
+polling_zip <- polling_zip[!duplicated(polling_zip), ]
 
 # read in Convenient Sample
 d_con <- read_excel("Data stripped of free text/KUSUND_1805_AJM.xlsx")
@@ -86,19 +87,30 @@ dev.off()
 
 # subplot for Copenhagen
 
-
+# narrow down to CPH kommun
 d_con_cph <- d_con[d_con$kommun == "koebenhavn",]
 
+#define polling district variable in data
+d_con_cph$polldistrict <- c("")
+
+for (i in (unique(d_con_cph$q3))) {
+  if(i %in% polling_zip$ZIP) {
+    d_con_cph$polldistrict[d_con_cph$q3 == i] <- sample(polling_zip$Afstem[polling_zip$ZIP == i], 1)
+  } else {
+    d_con_cph$polldistrict[d_con_cph$q3 == i] <- NA
+  }
+}
+
 # average loneliness per ZIP and kommun
-results_lonely_zip <- d_con_cph %>%
-  group_by(q3) %>%
+results_lonely_poll <- d_con_cph %>%
+  group_by(polldistrict) %>%
   summarise(Loneliness = mean(q16_sum, na.rm=T))
 #results_lonely_zip <- results_lonely_zip[1:220,]
 
-mapDK(values = "Loneliness", id = "q3", 
-      data = results_lonely_zip,
-      detail = "zip",
-      guide.label = "Average levels \nof loneliness \nper postnr",
+mapDK(values = "Loneliness", id = "polldistrict", 
+      data = results_lonely_poll,
+      detail = "polling",
+      guide.label = "Average levels \nof loneliness \nper polling district",
       sub.plot = "koebenhavn")
 
 
