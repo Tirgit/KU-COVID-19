@@ -6,16 +6,16 @@ library(tidyverse)
 library(lubridate)
 
 # run shared .Rmd file until load of these 3 are done and save
-#saveRDS(d_pop, "C:/Users/vrw657/Documents/Projects/Corona_SJPH/d_pop.rds")
-#saveRDS(d_fam, "C:/Users/vrw657/Documents/Projects/Corona_SJPH/d_fam.rds")
-#saveRDS(d_eld, "C:/Users/vrw657/Documents/Projects/Corona_SJPH/d_eld.rds")
+#saveRDS(d_pop, "C:/Users/vrw657/Documents/Projects/Corona_SJPH/Data/d_pop.rds")
+#saveRDS(d_fam, "C:/Users/vrw657/Documents/Projects/Corona_SJPH/Data/d_fam.rds")
+#saveRDS(d_eld, "C:/Users/vrw657/Documents/Projects/Corona_SJPH/Data/d_eld.rds")
 
 # merging 3 datasets
-d_pop <- readRDS("C:/Users/vrw657/Documents/Projects/Corona_SJPH/d_pop.rds")
-d_fam <- readRDS("C:/Users/vrw657/Documents/Projects/Corona_SJPH/d_fam.rds")
-d_eld <- readRDS("C:/Users/vrw657/Documents/Projects/Corona_SJPH/d_eld.rds")
+d_pop <- readRDS("C:/Users/vrw657/Documents/Projects/Corona_SJPH/Data/d_pop.rds")
+d_fam <- readRDS("C:/Users/vrw657/Documents/Projects/Corona_SJPH/Data/d_fam.rds")
+d_eld <- readRDS("C:/Users/vrw657/Documents/Projects/Corona_SJPH/Data/d_eld.rds")
 
-varkeep <- c("q1", "q2", "q5", "q12", "q15", "q16_1_resp",
+varkeep <- c("q1", "q2", "q5", "q12", "q14", "q15", "q16_1_resp",
              "q16_2_resp", "q16_3_resp", "q20", "date")
 
 d_pop_selected = subset(d_pop, select = varkeep )
@@ -31,9 +31,9 @@ d_merged$q16_2_num <-recode(d_merged$q16_2_resp, 'Næsten aldrig eller aldrig'=1
 d_merged$q16_3_num <-recode(d_merged$q16_3_resp, 'Næsten aldrig eller aldrig'=1, 'Noget af tiden'=2, 'Ofte'=3)
 d_merged$q16_sum <- d_merged$q16_1_num + d_merged$q16_2_num + d_merged$q16_3_num
 
-varkeep <- c("q1", "q2", "q5", "q12", "q15", "q16_sum", "q20", "date")
+varkeep <- c("q1", "q2", "q5", "q12", "q14", "q15", "q16_sum", "q20", "date")
 d_con_selected <- subset(d_merged, select = varkeep )
-colnames(d_con_selected) <- c("Sex", "Age", "Education", "Chronic_disease",
+colnames(d_con_selected) <- c("Sex", "Age", "Education", "Chronic_disease", "Mental_disease",
                         "Social_Isolation", "UCLA_loneliness", "Worried", "Date")
 
 
@@ -73,6 +73,12 @@ d_con_selected$Chronic_disease[d_con_selected$Chronic_disease == "Nej"] <- "No c
 d_con_selected$Chronic_disease[d_con_selected$Chronic_disease == "Ja"] <- "Chronic disease"
 d_con_selected$Chronic_disease <- as.factor(d_con_selected$Chronic_disease)
 levels(d_con_selected$Chronic_disease)
+table(d_con_selected$Mental_disease)
+d_con_selected$Mental_disease[d_con_selected$Mental_disease == "Nej"] <- "No mental illness"
+d_con_selected$Mental_disease[d_con_selected$Mental_disease == "Ja"] <- "Previous mental illness"
+d_con_selected$Mental_disease <- as.factor(d_con_selected$Mental_disease)
+levels(d_con_selected$Mental_disease)
+
 
 # recode extremes
 d_con_selected$Social_Isolation[d_con_selected$Social_Isolation == "1 – Slet ikke"] <- "1"
@@ -100,7 +106,7 @@ d_con_selected$UCLA_loneliness <- NULL
 d_con_selected$Age <- NULL
 
 summary(d_con_selected)
-colnames(d_con_selected) <- c("Sex", "Education", "Chronic", "Date", "Age",
+colnames(d_con_selected) <- c("Sex", "Education", "Chronic", "Mental", "Date", "Age",
                               "Very isolated", "Very worried", "Very lonely")
 
 # save Epinion for bulk merge
@@ -109,35 +115,27 @@ colnames(d_con_selected) <- c("Sex", "Education", "Chronic", "Date", "Age",
 #col_order <- c("Sex", "Age", "Education", "Chronic", 
 #               "Very isolated", "Very worried", "Very lonely")
 #d_con_bulkmerge <- d_con_bulkmerge[, col_order]
-#saveRDS(d_con_bulkmerge, "C:/Users/vrw657/Documents/Projects/Corona_SJPH/Epinion_bulk.rds")
+#saveRDS(d_con_bulkmerge, "C:/Users/vrw657/Documents/Projects/Corona_SJPH/Data/Epinion_bulk.rds")
 
-d_con_selected$Sex <- NULL
-d_con_selected$Education <- NULL
-d_con_selected$Chronic <- NULL
-d_con_selected$Age <- NULL
 
-# melting data
-d_con_melt <- as.data.frame(reshape2::melt(d_con_selected, id.var = c("Date")))
+# worriedness time plot
+varkeep <- c("q20", "date")
+d_pop_selected = subset(d_pop, select = varkeep )
+colnames(d_pop_selected) <- c("Worried", "Date")
+d_pop_selected$Worried[d_pop_selected$Worried == "1 – Ikke bekymret"] <- "1"
+d_pop_selected$Worried[d_pop_selected$Worried == "10 – Meget bekymret"] <- "10"
+d_pop_selected$Worried <- as.numeric(d_pop_selected$Worried)
+
 
 # calculating proportions
-results <- d_con_melt %>%
-  group_by(variable, value, Date) %>%
-  summarise(total_n = n() ) 
-results$countT <- c(0)
-for (i in unique(d_con_selected$Date)) {
-  results$countT[results$Date == i] <- sum(d_con_selected$Date == i)
-}
-results <- results[results$value == "Yes",] 
-results <- results %>%
-  mutate(percent = round(100*total_n/countT,2))
+results <- d_pop_selected %>%
+  group_by(Date) %>%
+  summarise(mean_worry = mean(Worried),
+            sd_worry = sd(Worried))
 
-varkeep <- c("variable", "Date", "percent")
-res <- subset(results, select = varkeep )
-res_worry <- res[res$variable == "Very worried",] 
-
-
-p <- ggplot(data = res_worry, aes(x = Date, y = percent, fill = "red")) +
-  geom_bar(stat="identity", width = 0.7) +
+p <- ggplot(data = results, aes(x = Date, y = mean_worry)) +
+  geom_point() +
+  geom_errorbar(aes(ymin=mean_worry-sd_worry, ymax=mean_worry+sd_worry), width=.2) +
   scale_x_date(date_labels="%d %b",date_breaks  ="3 day") + 
   theme(axis.title=element_text(size=8,face="bold"),
         axis.text.x = element_text(angle = 45, hjust = 1),
@@ -148,13 +146,14 @@ p <- ggplot(data = res_worry, aes(x = Date, y = percent, fill = "red")) +
         panel.grid.minor = element_blank(),
         panel.background = element_blank(), 
         axis.line = element_line(colour = "black")) +
-  scale_y_continuous(limits = c(0,70), expand = c(0, 0)) +
-  expand_limits(x = as.Date(c("2020-02-28", "2020-05-17"))) +
-  ggtitle("Proportion of individuals who are very worried about the crisis") +
+  ylab("Mean levels of worries") +
+  scale_y_continuous(limits = c(0,10), expand = c(0, 0)) +
+  expand_limits(x = as.Date(c("2020-02-28", "2020-06-30"))) +
+  ggtitle("Mean levels of worriedness about the crisis") +
   #theme(plot.title = element_text(size = 12, face = "bold",hjust = 0.5)) +
   theme(legend.position = "none") 
 
-pdf("C:/Users/vrw657/Documents/Projects/Corona_SJPH/Epinion_worry_time.pdf", width = 9, height = 3)
+pdf("C:/Users/vrw657/Documents/Projects/Corona_SJPH/DK_plots/Epinion_worry_time.pdf", width = 9, height = 3)
 p
 dev.off()
 

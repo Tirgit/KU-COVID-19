@@ -19,14 +19,14 @@ datecoll <- as.data.frame(table(d_con$date))
 colnames(datecoll) <- c("Date", "Participants")
 # first date is 26th March, so define 25th March as origin
 datecoll$Date <- as.Date(as.numeric(datecoll$Date), origin = "2020-03-25")
-p <- ggplot(datecoll, aes(Date, Participants)) + 
-  geom_bar(stat = 'identity') +
-  ggtitle("Citizen Science reports per day") + 
-  theme(plot.title = element_text(hjust = 0.5))
+#p <- ggplot(datecoll, aes(Date, Participants)) + 
+#  geom_bar(stat = 'identity') +
+#  ggtitle("Citizen Science reports per day") + 
+#  theme(plot.title = element_text(hjust = 0.5))
 
-pdf("C:/Users/vrw657/Documents/Projects/Corona_SJPH/citizen_science_reps.pdf", width = 6, height = 3)
-p
-dev.off()
+#pdf("C:/Users/vrw657/Documents/Projects/Corona_SJPH/citizen_science_reps.pdf", width = 6, height = 3)
+#p
+#dev.off()
 
 ### UCLA loneliness
 d_con$q16_1_num <-recode(d_con$q16_1_resp, 'Næsten aldrig eller aldrig'=1, 'Noget af tiden'=2, 'Ofte'=3)
@@ -36,10 +36,10 @@ d_con$q16_sum <- d_con$q16_1_num + d_con$q16_2_num + d_con$q16_3_num
 
 
 ### removing not needed variables
-varkeep <- c("q1", "q2", "q5", "q12", "q15", "q16_sum", "q20")
+varkeep <- c("q1", "q2", "q5", "q12", "q14", "q15", "q16_sum", "q20")
 
-d_con_selected = subset(d_con, select = varkeep )
-colnames(d_con_selected) <- c("Sex", "Age", "Education", "Chronic_disease",
+d_con_selected <- subset(d_con, select = varkeep )
+colnames(d_con_selected) <- c("Sex", "Age", "Education", "Chronic_disease", "Mental_disease",
                               "Social_Isolation", "UCLA_loneliness","Worried")
 
 # recode variables
@@ -65,9 +65,14 @@ d_con_selected$Education[d_con_selected$Education == "Lang videregående uddanne
 d_con_selected$Education <- as.factor(d_con_selected$Education)
 table(d_con_selected$Chronic_disease)
 d_con_selected$Chronic_disease[d_con_selected$Chronic_disease == "Nej"] <- "No chronic disease"
-d_con_selected$Chronic_disease[d_con_selected$Chronic_disease == "Ja"] <- "Chronic disease"
+d_con_selected$Chronic_disease[d_con_selected$Chronic_disease == "Ja"] <- "Previous chronic disease"
 d_con_selected$Chronic_disease <- as.factor(d_con_selected$Chronic_disease)
 levels(d_con_selected$Chronic_disease)
+table(d_con_selected$Mental_disease)
+d_con_selected$Mental_disease[d_con_selected$Mental_disease == "Nej"] <- "No mental illness"
+d_con_selected$Mental_disease[d_con_selected$Mental_disease == "Ja"] <- "Previous mental illness"
+d_con_selected$Mental_disease <- as.factor(d_con_selected$Mental_disease)
+levels(d_con_selected$Mental_disease)
 
 # recode extremes
 d_con_selected$Social_Isolation[d_con_selected$Social_Isolation == "1 – Slet ikke"] <- "1"
@@ -95,11 +100,11 @@ d_con_selected$UCLA_loneliness <- NULL
 d_con_selected$Age <- NULL
 
 summary(d_con_selected)
-colnames(d_con_selected) <- c("Sex", "Education", "Chronic", "Age",
+colnames(d_con_selected) <- c("Sex", "Education", "Chronic", "Mental", "Age",
                               "Very isolated", "Very worried", "Very lonely")
 
 #load and merge Epinion
-epinion <- readRDS("C:/Users/vrw657/Documents/Projects/Corona_SJPH/Epinion_bulk.rds")
+epinion <- readRDS("C:/Users/vrw657/Documents/Projects/Corona_SJPH/Data/Epinion_bulk.rds")
 merged_data <- rbind(d_con_selected, epinion)
 
 # melting data

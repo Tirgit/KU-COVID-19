@@ -14,7 +14,7 @@ library(gridExtra)
 setwd("C:/Users/vrw657/Dropbox/Data")
 
 #### LOAD LATEST CITIZEN SCIENCE DATA
-d_con <- read_excel("Data stripped of free text/KUSUND_2004_AJM.xlsx")
+d_con <- read_excel("Data stripped of free text/KUSUND_1805_AJM.xlsx")
 d_con_q <- d_con[1,] # We save the questions in another data set
 d_con <- d_con[-1,] # Removing the line with the questions
 
@@ -124,7 +124,7 @@ gp2$widths[2:5] <- as.list(maxWidth)
 title1 <- grid::textGrob("Worries and Precautions in the Citizen Science cohort", gp=grid::gpar(fontsize=12,font=1))
 grid.arrange(gp1, gp2, nrow = 2, ncol=1, heights=c(2,2), top=title1)
 
-pdf("C:/Users/vrw657/Documents/Projects/Corona_SJPH/citizen_science_multicat.pdf", width = 6, height = 6)
+pdf("C:/Users/vrw657/Documents/Projects/Corona_SJPH/DK_plots/citizen_science_multicat.pdf", width = 6, height = 6)
 grid.arrange(gp1, gp2, nrow = 2, ncol=1, heights=c(2,2), top=title1)
 dev.off()
 

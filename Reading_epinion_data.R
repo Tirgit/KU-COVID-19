@@ -3,7 +3,7 @@ library(writexl)
 
 # DOWNLOAD FILES TO DOWNLOADS
 # THE ONLY LINE TO MODIFY IS THE FOLLOWING. SPECIFY THE WEEK #
-weekno <- "W19"
+weekno <- "W20"
 
 setwd("C:/Users/vrw657/Downloads")
 genpop_origfile <- paste0("Corona_Befolkningen_", weekno, ".xlsx")
