@@ -106,11 +106,14 @@ colnames(d_con_selected) <- c("Sex", "Education", "Chronic", "Mental", "Age",
 #load and merge Epinion
 epinion <- readRDS("C:/Users/vrw657/Documents/Projects/Corona_SJPH/Data/Epinion_bulk.rds")
 merged_data <- rbind(d_con_selected, epinion)
+merged_data$`Very isolated` <- NULL
+merged_data$`Very worried` <- NULL
+
 
 # melting data
 d_con_melt <- as.data.frame(reshape2::melt(merged_data, id.var = c("Sex", "Age", 
                                                                       "Education", 
-                                                                      "Chronic")))
+                                                                      "Chronic", "Mental")))
 #all
 results <- d_con_melt %>%
   group_by(variable, value) %>%
@@ -179,39 +182,39 @@ results_chron <- results_chron[results_chron$value == "Yes",]
 results_chron$Strata <- as.character(results_chron$Chronic)
 results_chron$Chronic <- NULL
 
-all_res <- rbind(results,results_sex,results_age,results_educ,results_chron)
+#mental stratified
+results_ment <- d_con_melt %>%
+  group_by(variable, value, Mental) %>%
+  summarise(total_n = n() )
+results_ment$countT <- c(0)
+for (i in unique(merged_data$Mental)) {
+  results_ment$countT[results_ment$Mental == i] <- sum(merged_data$Mental == i)
+}
+results_ment <- results_ment %>%
+  mutate(percent = round(100*total_n/countT,2))
+results_ment <- results_ment[results_ment$value == "Yes",] 
+results_ment$Strata <- as.character(results_ment$Mental)
+results_ment$Mental <- NULL
+
+
+all_res <- rbind(results,results_sex,results_age,results_educ,results_chron,results_ment)
 all_res$barcolor <- "red"
 all_res$barcolor[all_res$Strata == "All"] <- "blue"
 all_res <- all_res[all_res$Strata != "Other/Not specified",]
-res_isolated <- all_res[all_res$variable == "Very isolated",] 
-res_worry <- all_res[all_res$variable == "Very worried",] 
 res_lonely <- all_res[all_res$variable == "Very lonely",] 
+res_lonely$Category <- c("All", "Gender", "Gender", "Age", "Age", "Age",
+                         "Education", "Education", "Education",
+                         "Chronic disease", "Chronic disease",
+                         "Mental illness", "Mental illness")
+res_lonely$Category <- as.factor(res_lonely$Category)
+res_lonely$Category <- factor(res_lonely$Category, levels=c("All", "Gender", "Age", 
+                                                            "Education", "Chronic disease",
+                                                            "Mental illness"))
 
-#social isolation plot
-p <- ggplot(data = res_isolated, aes(x = reorder(Strata, percent), y = percent, fill = barcolor)) +
-  geom_bar(stat="identity", width = 0.7) +
-  xlab("Isolation") +
-  theme(axis.title=element_text(size=8,face="bold"),
-        axis.text.x = element_text(angle = 45, hjust = 1),
-        axis.title.x=element_blank(),
-        axis.ticks.x=element_blank(),
-        plot.title = element_text(hjust = 0.5),
-        panel.grid.major = element_blank(), 
-        panel.grid.minor = element_blank(),
-        panel.background = element_blank(), 
-        axis.line = element_line(colour = "black")) +
-  scale_y_continuous(limits = c(0,55), expand = c(0, 0)) +
-  ggtitle("Proportion of individuals with high levels of social isolation") +
-  #theme(plot.title = element_text(size = 12, face = "bold",hjust = 0.5)) +
-  theme(legend.position = "none") +
-  theme(axis.text.x = element_text(face = c('plain','plain','plain','plain','plain',
-                                            'plain','bold','plain','plain','plain',
-                                            'plain','plain'))) +
-  theme(axis.text.x = element_text(size = c(8,8,8,8,8,8,12,8,8,8,8,8))) 
-  #scale_x_discrete(labels=c("All"=expression(bold("All")), parse=TRUE))
 
 #loneliness plot
 q <- ggplot(data = res_lonely, aes(x = reorder(Strata, percent), y = percent, fill = barcolor)) +
+  facet_grid(~Category, scale = "free", space = "free") +
   geom_bar(stat="identity", width = 0.7) +
   xlab("Isolation") +
   theme(axis.title=element_text(size=8,face="bold"),
@@ -230,16 +233,12 @@ q <- ggplot(data = res_lonely, aes(x = reorder(Strata, percent), y = percent, fi
   theme(axis.text.x = element_text(face = c('plain','plain','plain','plain','plain',
                                             'plain','bold','plain','plain','plain',
                                             'plain','plain'))) +
-  theme(axis.text.x = element_text(size = c(8,8,8,8,8,8,12,8,8,8,8,8))) 
+  theme(axis.text.x = element_text(size = c(8,8,8,8,8,8,12,8,8,8,8,8))) + 
+  theme(strip.text.x = element_text(size = 7))
 #scale_x_discrete(labels=c("All"=expression(bold("All")), parse=TRUE))
 
 
-
-pdf("C:/Users/vrw657/Documents/Projects/Corona_SJPH/Bulk_stratified_isolation.pdf", width = 6, height = 3)
-p
-dev.off()
-
-pdf("C:/Users/vrw657/Documents/Projects/Corona_SJPH/Bulk_stratified_loneliness.pdf", width = 6, height = 3)
+pdf("C:/Users/vrw657/Documents/Projects/Corona_SJPH/DK_plots/Bulk_stratified_loneliness.pdf", width = 6, height = 3)
 q
 dev.off()
 
