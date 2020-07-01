@@ -85,7 +85,7 @@ pdf("C:/Users/vrw657/Documents/Projects/Corona_SJPH/Citizen_Science_loneliness_D
 q
 dev.off()
 
-# subplot for Copenhagen
+# subplot for Copenhagen and Fredriksberg
 
 # narrow down to CPH kommun
 d_con_cph <- d_con[d_con$kommun == "koebenhavn",]
@@ -113,8 +113,6 @@ mapDK(values = "Loneliness", id = "polldistrict",
       guide.label = "Average levels \nof loneliness \nper polling district",
       sub.plot = "koebenhavn")
 
-
-
 mapDK(values = "stemmer", id = "id", 
       data = subset(mapDK::votes, navn == "socialdemokratiet"),
       detail = "polling", show_missing = FALSE,
@@ -126,3 +124,18 @@ polll <- mapDK::polling
 polll_cph <- polll[polll$KommuneNav == "koebenhavn",]
 
 unique(polll_cph$id)
+
+# new section
+# try with ZIP codes
+
+mapDK(values = "Loneliness", id = "polldistrict", 
+      data = results_lonely_poll,
+      detail = "zip",
+      guide.label = "Average levels \nof loneliness \nper polling district",
+      sub.plot = "koebenhavn")
+
+
+
+
+
+
