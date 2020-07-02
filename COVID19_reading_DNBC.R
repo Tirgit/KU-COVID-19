@@ -98,7 +98,7 @@ W1_selected$Chronic_disease <- as.factor(W1_selected$Chronic_disease)
 levels(W1_selected$Chronic_disease)
 table(W1_selected$Chronic_disease)
 
-# mental illness - ADD FREE TEXT!
+# mental illness
 table(W1_selected$H052, exclude = NULL)
 W1_selected$Mental_disease <- "No mental illness"
 W1_selected$Mental_disease[W1_selected$H052 == 1] <- "Previous mental illness"

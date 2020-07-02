@@ -44,9 +44,9 @@ p <- ggplot(data = results, aes(x = Date, y = mean_worry)) +
   expand_limits(x = as.Date(c("2020-02-28", "2020-06-30"))) +
   ggtitle("Mean levels of worriedness about the crisis") +
   #theme(plot.title = element_text(size = 12, face = "bold",hjust = 0.5)) +
-  theme(legend.position = "none") 
+  theme(legend.position = "none")
 
-pdf("C:/Users/vrw657/Documents/Projects/Corona_SJPH/DK_plots/Epinion_worry_time.pdf", width = 9, height = 3)
+pdf("C:/Users/vrw657/Documents/Projects/Corona_SJPH/DK_plots/DK_worry_time.pdf", width = 9, height = 3)
 p
 dev.off()
 

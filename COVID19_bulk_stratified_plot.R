@@ -218,7 +218,7 @@ q <- ggplot(data = res_lonely, aes(x = reorder(Strata, percent), y = percent, fi
   geom_bar(stat="identity", width = 0.7) +
   xlab("Isolation") +
   theme(axis.title=element_text(size=8,face="bold"),
-        axis.text.x = element_text(angle = 45, hjust = 1),
+        axis.text.x = element_text(angle = 30, hjust = 1),
         axis.title.x=element_blank(),
         axis.ticks.x=element_blank(),
         plot.title = element_text(hjust = 0.5),
@@ -238,7 +238,7 @@ q <- ggplot(data = res_lonely, aes(x = reorder(Strata, percent), y = percent, fi
 #scale_x_discrete(labels=c("All"=expression(bold("All")), parse=TRUE))
 
 
-pdf("C:/Users/vrw657/Documents/Projects/Corona_SJPH/DK_plots/Bulk_stratified_loneliness.pdf", width = 6, height = 3)
+pdf("C:/Users/vrw657/Documents/Projects/Corona_SJPH/DK_plots/DK_stratified_loneliness.pdf", width = 6, height = 3)
 q
 dev.off()
 
