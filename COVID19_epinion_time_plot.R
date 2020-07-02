@@ -13,7 +13,7 @@ d_pop <- readRDS("C:/Users/vrw657/Documents/Projects/Corona_SJPH/Data/d_pop.rds"
 
 # worriedness time plot
 varkeep <- c("q20", "date")
-d_pop_selected = subset(d_pop, select = varkeep )
+d_pop_selected <- subset(d_pop, select = varkeep )
 colnames(d_pop_selected) <- c("Worried", "Date")
 d_pop_selected$Worried[d_pop_selected$Worried == "1 – Ikke bekymret"] <- "1"
 d_pop_selected$Worried[d_pop_selected$Worried == "10 – Meget bekymret"] <- "10"
@@ -46,7 +46,7 @@ p <- ggplot(data = results, aes(x = Date, y = mean_worry)) +
   #theme(plot.title = element_text(size = 12, face = "bold",hjust = 0.5)) +
   theme(legend.position = "none")
 
-pdf("C:/Users/vrw657/Documents/Projects/Corona_SJPH/DK_plots/DK_worry_time.pdf", width = 9, height = 3)
+pdf("C:/Users/vrw657/Documents/Projects/Corona_SJPH/DK_plots/Epinion_worry_time.pdf", width = 9, height = 3)
 p
 dev.off()
 
