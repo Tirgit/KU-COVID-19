@@ -36,11 +36,13 @@ W7 <- readRDS("P:/DNBC_W7.rds")
 
 
 
-
-
 H077
-
-
+La055
+Lb055
+Lc055
+Ld055
+Le055
+Lf055
 
 
 
