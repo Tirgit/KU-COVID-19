@@ -109,6 +109,10 @@ merged_data <- rbind(d_con_selected, epinion)
 merged_data$`Very isolated` <- NULL
 merged_data$`Very worried` <- NULL
 
+#load and merge DNBC
+DNBC <- readRDS("C:/Users/vrw657/Documents/Projects/Corona_SJPH/Data/DNBC_bulk.rds")
+merged_data <- rbind(merged_data, DNBC)
+
 
 # melting data
 d_con_melt <- as.data.frame(reshape2::melt(merged_data, id.var = c("Sex", "Age", 
@@ -158,9 +162,10 @@ results_age$Age <- NULL
 results_educ <- d_con_melt %>%
   group_by(variable, value, Education) %>%
   summarise(total_n = n() )
+results_educ <- results_educ[!is.na(results_educ$Education),]
 results_educ$countT <- c(0)
-for (i in unique(merged_data$Education)) {
-  results_educ$countT[results_educ$Education == i] <- sum(merged_data$Education == i)
+for (i in unique(merged_data$Education)[1:3]) {
+  results_educ$countT[results_educ$Education == i] <- sum(merged_data$Education == i, na.rm = T)
 }
 results_educ <- results_educ %>%
   mutate(percent = round(100*total_n/countT,2))

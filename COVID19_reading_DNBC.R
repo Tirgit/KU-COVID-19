@@ -109,19 +109,13 @@ levels(W1_selected$Mental_disease)
 table(W1_selected$Mental_disease)
 
 
+varkeep <- c("Lonely_high", "Sex", "Age_cat", "Education", 
+             "Chronic_disease", "Mental_disease")
 
+W1_work <- subset(W1_selected, select = varkeep )
+colnames(W1_work) <- c("Very lonely", "Sex", "Age", "Education", 
+                       "Chronic", "Mental")
+DNBC <- W1_work[, c(2, 4, 5, 6, 3, 1)]
 
-
-
-
-
-
-
-
-varkeep <- c("H_alder", "H002", "H017", "H048_1", 
-             "H048_2", "H048_3", "H048_4", "H048_5", 
-             "H048_6", "H048_7", "H048_8", "H048_9A", 
-             "H049", "H052", "H057", "H058", "H059")
-
-W1_selected <- subset(W1, select = varkeep )
+saveRDS(DNBC, "C:/Users/vrw657/Documents/Projects/Corona_SJPH/Data/DNBC_bulk.rds")
 
