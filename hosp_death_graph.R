@@ -2,7 +2,8 @@ library(ggplot2)
 library(ggpubr)
 library(dplyr)
 library(tidyverse)
-setwd("/Users/med-tv_/Documents/Projects/Corona_SJPH")
+library(readxl)
+setwd("C:/Users/vrw657/Documents/Projects/Corona_SJPH/Data")
 
 #Denmark
 corona <- read.delim("Hospital_death_data_DK.txt", header = T)
@@ -96,4 +97,19 @@ p <- ggplot(corona, aes(x = Date, y = Hospitalization)) +
 pdf("pred_year_FR.pdf", width = 9, height = 3)
 p
 dev.off()
+
+
+corona <- read_excel("FR_newly_admitted_hospital.xlsx")
+corona$Date <- as.Date(corona$jour)
+
+FR_daily_hosp <- corona %>%
+  group_by(Date) %>%
+  summarise(hosp = sum(incid_hosp))
+
+sum(FR_daily_hosp$hosp)
+
+
+
+
+
 
