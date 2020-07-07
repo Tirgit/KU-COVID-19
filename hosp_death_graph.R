@@ -34,7 +34,7 @@ p <- ggplot(corona, aes(x = Date, y = Hospitalization)) +
         axis.title.y.right = element_text(color = "#0072B2"))
   
 axis.line.y.right = element_line(color = "red")
-  
+  g
 
 
 # add second axis for deaths!
