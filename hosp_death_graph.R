@@ -31,6 +31,14 @@ p <- ggplot(corona, aes(x = Date, y = Hospitalization)) +
         axis.ticks.x=element_blank())
 
 
+# add second axis for deaths!
++ 
+  scale_y_continuous(
+    "mpg (US)", 
+    sec.axis = sec_axis(~ . * 1.20, name = "mpg (UK)")
+  )
+
+
 pdf("DK_plots/pred_year_DK.pdf", width = 9, height = 3)
 p
 dev.off()
@@ -100,8 +108,19 @@ dev.off()
 
 
 #France
-corona <- read.delim("Data/Hospital_death_data_FR.txt", header = T)
-corona$Date <- as.Date(corona$Date, tryFormats = c("%d/%m/%Y"))
+hosp <- read_excel("Data/FR_newly_admitted_hospital.xlsx")
+hosp$Date <- as.Date(hosp$jour)
+
+FR_daily_hosp <- hosp %>%
+  group_by(Date) %>%
+  summarise(Hospitalization = sum(incid_hosp))
+
+# sum(FR_daily_hosp$Hospitalization)
+
+death <- read.delim("Data/Hospital_death_data_FR.txt", header = T)
+death$Date <- as.Date(death$Date, tryFormats = c("%d/%m/%Y"))
+corona <- full_join(death, FR_daily_hosp, by = "Date")
+
 mindate <- min(corona$Date)
 maxdate <- max(corona$Date)
 upper_lim <- max(corona$Death_cumulative, na.rm = T)*1.1
@@ -125,19 +144,11 @@ p <- ggplot(corona, aes(x = Date, y = Hospitalization)) +
         axis.ticks.x=element_blank())
 
 
-pdf("pred_year_FR.pdf", width = 9, height = 3)
+pdf("FR_plots/pred_year_FR.pdf", width = 9, height = 3)
 p
 dev.off()
 
 
-corona <- read_excel("Data/FR_newly_admitted_hospital.xlsx")
-corona$Date <- as.Date(corona$jour)
-
-FR_daily_hosp <- corona %>%
-  group_by(Date) %>%
-  summarise(Hospitalization = sum(incid_hosp))
-
-sum(FR_daily_hosp$Hospitalization)
 
 
 
