@@ -6,6 +6,7 @@ library(tidyverse)
 library(lubridate)
 library(survey)
 library(readxl)
+library(Hmisc) 
 
 # run shared .Rmd file until load of these 3 are done and save
 #saveRDS(d_pop, "C:/Users/vrw657/Documents/Projects/Corona_SJPH/Data/d_pop.rds")
@@ -123,8 +124,8 @@ d_pop_selected$Worried <- as.numeric(d_pop_selected$Worried)
 # calculating proportions
 results <- d_pop_selected %>%
   group_by(Date) %>%
-  summarise(mean_worry = mean(Worried),
-            sd_worry = sd(Worried))
+  summarise(mean_worry = wtd.mean(Worried, Weights),
+            sd_worry = sqrt(wtd.var(Worried)))
 
 p <- ggplot(data = results, aes(x = Date, y = mean_worry)) +
   geom_point() +
@@ -141,8 +142,8 @@ p <- ggplot(data = results, aes(x = Date, y = mean_worry)) +
         axis.line = element_line(colour = "black")) +
   ylab("Mean levels of worries") +
   scale_y_continuous(limits = c(0,10), expand = c(0, 0)) +
-  expand_limits(x = as.Date(c("2020-02-28", "2020-06-30"))) +
-  ggtitle("Mean levels of worriedness about the crisis") +
+  expand_limits(x = as.Date(c("2020-03-03", "2020-06-29"))) +
+  #ggtitle("Mean levels of worriedness about the crisis") +
   #theme(plot.title = element_text(size = 12, face = "bold",hjust = 0.5)) +
   theme(legend.position = "none")
 

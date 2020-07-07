@@ -232,7 +232,7 @@ q <- ggplot(data = res_lonely, aes(x = reorder(Strata, percent), y = percent, fi
         panel.background = element_blank(), 
         axis.line = element_line(colour = "black")) +
   scale_y_continuous(limits = c(0,30), expand = c(0, 0)) +
-  ggtitle("Proportion of individuals with high levels of loneliness") +
+  #ggtitle("Proportion of individuals with high levels of loneliness") +
   #theme(plot.title = element_text(size = 12, face = "bold",hjust = 0.5)) +
   theme(legend.position = "none") +
   theme(axis.text.x = element_text(face = c('plain','plain','plain','plain','plain',

@@ -70,20 +70,37 @@ summary(DNBC_worries)
 # date from datetime
 DNBC_worries$Date <- as.Date(DNBC_worries$Datetime)
 
+DNBC_worries$Week <- NA
+DNBC_worries$Week[DNBC_worries$Date <= "2020-05-24"] <- "Week 21 (18−24 May)"
+DNBC_worries$Week[DNBC_worries$Date <= "2020-05-17"] <- "Week 20 (11−17 May)"
+DNBC_worries$Week[DNBC_worries$Date <= "2020-05-10"] <- "Week 19 (4−10 May)"
+DNBC_worries$Week[DNBC_worries$Date <= "2020-05-03"] <- "Week 18 (27 Apr − 3 May)"
+DNBC_worries$Week[DNBC_worries$Date <= "2020-04-26"] <- "Week 17 (20−26 Apr)"
+DNBC_worries$Week[DNBC_worries$Date <= "2020-04-19"] <- "Week 16 (13−19 Apr)"
+DNBC_worries$Week[DNBC_worries$Date <= "2020-04-12"] <- "Week 15 (6−12 Apr)"
+DNBC_worries$Week[DNBC_worries$Date <= "2020-04-05"] <- "Week 14 (30 Mar − 5 Apr)"
+
+DNBC_worries <- DNBC_worries[!is.na(DNBC_worries$Week),]
+varorder <- sort(unique(DNBC_worries$Week))
+DNBC_worries$Week <- factor(DNBC_worries$Week,
+                            levels=varorder)
+table(DNBC_worries$Week)
+
 # calculating proportions
 results <- DNBC_worries %>%
-  group_by(Date) %>%
+  group_by(Week) %>%
   summarise(mean_worry = mean(Worried),
             sd_worry = sd(Worried),
             n = n())
 
+
 # plotting
-p <- ggplot(data = results, aes(x = Date, y = mean_worry)) +
+p <- ggplot(data = results, aes(x = Week, y = mean_worry)) +
   geom_point() +
   geom_errorbar(aes(ymin=mean_worry-sd_worry, ymax=mean_worry+sd_worry), width=.2) +
-  scale_x_date(date_labels="%d %b",date_breaks  ="3 day") + 
+  #scale_x_date(date_labels="%d %b",date_breaks  ="3 day") + 
   theme(axis.title=element_text(size=8,face="bold"),
-        axis.text.x = element_text(angle = 45, hjust = 1),
+        axis.text.x = element_text(angle = 30, hjust = 1),
         axis.title.x=element_blank(),
         axis.ticks.x=element_blank(),
         plot.title = element_text(hjust = 0.5),
@@ -93,12 +110,13 @@ p <- ggplot(data = results, aes(x = Date, y = mean_worry)) +
         axis.line = element_line(colour = "black")) +
   ylab("Mean levels of worries") +
   scale_y_continuous(limits = c(0,10), expand = c(0, 0)) +
-  expand_limits(x = as.Date(c("2020-02-28", "2020-06-30"))) +
-  ggtitle("Mean levels of worriedness about the crisis") +
+  #expand_limits(x = as.Date(c("2020-02-28", "2020-06-30"))) +
+  #ggtitle("Mean levels of worriedness about the crisis") +
   #theme(plot.title = element_text(size = 12, face = "bold",hjust = 0.5)) +
-  theme(legend.position = "none")
+  theme(legend.position = "none") +
+  theme(plot.margin=unit(c(0.3,0.1,0.1,2),"cm"))
 
-pdf("C:/Users/vrw657/Documents/Projects/Corona_SJPH/DK_plots/DNBC_worry_time.pdf", width = 9, height = 3)
+pdf("C:/Users/vrw657/Documents/Projects/Corona_SJPH/DK_plots/DNBC_worry_time.pdf", width = 6, height = 3)
 p
 dev.off()
 

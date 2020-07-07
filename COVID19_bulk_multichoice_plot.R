@@ -121,11 +121,11 @@ maxWidth = grid::unit.pmax(gp1$widths[2:5], gp2$widths[2:5])
 gp1$widths[2:5] <- as.list(maxWidth)
 gp2$widths[2:5] <- as.list(maxWidth)
 
-title1 <- grid::textGrob("Worries and Precautions in the Citizen Science cohort", gp=grid::gpar(fontsize=12,font=1))
-grid.arrange(gp1, gp2, nrow = 2, ncol=1, heights=c(2,2), top=title1)
+#title1 <- grid::textGrob("Worries and Precautions in the Citizen Science cohort", gp=grid::gpar(fontsize=12,font=1))
+#grid.arrange(gp1, gp2, nrow = 2, ncol=1, heights=c(2,2), top=title1)
 
 pdf("C:/Users/vrw657/Documents/Projects/Corona_SJPH/DK_plots/DK_multicat.pdf", width = 8, height = 6)
-grid.arrange(gp1, gp2, nrow = 2, ncol=1, heights=c(2,2), top=title1)
+grid.arrange(gp1, gp2, nrow = 2, ncol=1, heights=c(2,2))
 dev.off()
 
 
