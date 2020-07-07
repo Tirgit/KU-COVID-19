@@ -32,12 +32,6 @@ p <- ggplot(corona, aes(x = Date, y = Hospitalization)) +
         axis.ticks.x=element_blank(),
         axis.title.y = element_text(color = "#E69F00"),
         axis.title.y.right = element_text(color = "#0072B2"))
-  
-axis.line.y.right = element_line(color = "red")
-  g
-
-
-# add second axis for deaths!
 
 
 pdf("DK_plots/pred_year_DK.pdf", width = 9, height = 3)
