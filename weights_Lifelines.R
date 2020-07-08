@@ -1,0 +1,68 @@
+#Calculating weights for convenient sample
+##See also tutorial: see: http://tophcito.blogspot.com/2014/04/survey-computing-your-own-post.html
+setwd("C:/Users/vrw657/Dropbox/Data")
+library(survey)
+library(readxl)
+
+conv <- read_excel("Data stripped of free text/KUSUND_1805_AJM.xlsx")
+
+#Age
+table(conv$q2, useNA="always")
+#excluding participants younger than 15 years and older than 79 years because of few observations
+conv$q2[conv$q2 < 15 ] <- NA
+conv$q2[conv$q2 >= 15 & conv$q2 <= 19] <- "15-19"
+conv$q2[conv$q2 >= 20 & conv$q2 <= 24] <- "20-24"
+conv$q2[conv$q2 >= 25 & conv$q2 <= 29] <- "25-29"
+conv$q2[conv$q2 >= 30 & conv$q2 <= 34] <- "30-34"
+conv$q2[conv$q2 >= 35 & conv$q2 <= 39] <- "35-39"
+conv$q2[conv$q2 >= 40 & conv$q2 <= 44] <- "40-44"
+conv$q2[conv$q2 >= 45 & conv$q2 <= 49] <- "45-49"
+conv$q2[conv$q2 >= 50 & conv$q2 <= 54] <- "50-54"
+conv$q2[conv$q2 >= 55 & conv$q2 <= 59] <- "55-59"
+conv$q2[conv$q2 >= 60 & conv$q2 <= 64] <- "60-64"
+conv$q2[conv$q2 >= 65 & conv$q2 <= 69] <- "65-69"
+conv$q2[conv$q2 >= 70 & conv$q2 <= 74] <- "70-74"
+conv$q2[conv$q2 >= 75 & conv$q2 <= 79] <- "75-79"
+conv$q2[conv$q2 >79] <- NA
+table(conv$q2, useNA="always")
+
+#Gender 
+table(conv$q1, useNA="always")
+conv$q1[conv$q1 == "Kvinde" ] <- "Woman"
+conv$q1[conv$q1 == "Mand" ] <- "Man"
+conv$q1[conv$q1 == "?nsker ikke at oplyse" ] <- NA
+conv$q1[conv$q1 == "Andet" ] <- NA
+table(conv$q1, useNA="always")
+
+
+#create dataset without missing data on age, gender and region. 134 participants are excluded
+conv <- subset(conv, is.na(conv$q1)==FALSE & is.na(conv$q2)==FALSE)
+
+##Create unweighted survey object
+conv.svy.unweighted <- svydesign(ids=~1, data=conv)
+
+#Setting up population dataframes. Data comes from register FOLK1A, 1st quarter 2020 (2020 K1): https://statistikbanken.dk/statbank5a/selectvarval/define.asp?PLanguage=0&MainTable=FOLK1A&TabStrip=Select
+## distrubuion on region and gender is restricted to agegroup 15-79 
+
+gender.dist <- data.frame(q1 = c("Man", "Woman"),
+                          Freq = nrow(conv) * c(0.50, 0.50))
+
+age.dist <- data.frame(q2 = c("15-19", "20-24", "25-29", "30-34", "35-39", "40-44", "45-49", "50-54", "55-59", "60-64","65-69", "70-74","75-79"),
+                       Freq = nrow(conv) * c(0.07, 0.08, 0.09, 0.08, 0.07, 0.08, 0.09, 0.09, 0.08, 0.07, 0.07, 0.07, 0.05))
+
+
+#Calculating weights
+conv.svy.rake <- rake(design = conv.svy.unweighted,
+                      sample.margins = list(~q1, ~q2),
+                      population.margins = list(gender.dist, age.dist))
+
+summary(weights(conv.svy.rake))
+
+#Trim weights if to small ()smaller than 0.3 or too large (larger than 3)
+conv.svy.rake.trim <- trimWeights(conv.svy.rake, lower=0.3, upper=3,
+                                  strict=TRUE) 
+summary(weights(conv.svy.rake.trim))
+
+#Append weights to dataset
+convW <- cbind(conv, Weights = weights(conv.svy.rake.trim))
+
