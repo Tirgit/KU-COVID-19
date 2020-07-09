@@ -1,9 +1,9 @@
 library(readxl)
 library(ggplot2)
 
-setwd("C:/Users/vrw657/Documents/Projects/Corona_SJPH/UK_plots")
+setwd("C:/Users/vrw657/Documents/Projects/Corona_SJPH/FR_plots")
 
-# load UK loneliness data
+# load FR loneliness data
 res_lonely <- read_excel("UK_loneliness.xlsx")
 res_lonely$Category <- factor(res_lonely$Category, levels=c("All", "Gender", "Age", 
                                                             "Education", "Chronic disease",
@@ -39,8 +39,8 @@ q
 dev.off()
 
 
-# load UK multichoice data
-results_worries <- read_excel("UK_multichoice.xlsx")
+# load FR multichoice data
+results_worries <- read_excel("FR_multichoice.xlsx")
 varorder <- results_worries$variable
 results_worries$variable <- factor(results_worries$variable,
                                    levels=varorder)
@@ -61,12 +61,12 @@ p <- ggplot(data = results_worries, aes(x = forcats::fct_rev(variable) , y = per
   theme(legend.position = "none")
 
 
-pdf("C:/Users/vrw657/Documents/Projects/Corona_SJPH/UK_plots/UK_multicat.pdf", width = 8, height = 6)
+pdf("C:/Users/vrw657/Documents/Projects/Corona_SJPH/FR_plots/FR_multicat.pdf", width = 8, height = 6)
 p
 dev.off()
 
 
-# load UK time data
+# load FR time data
 results_time <- read_excel("UK_time.xlsx")
 varorder <- results_time$week
 results_time$week <- factor(results_time$week,

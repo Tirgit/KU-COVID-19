@@ -99,6 +99,7 @@ p1 <- ggplot(data = results_worries, aes(x = fct_rev(variable) , y = percent, fi
         axis.line = element_line(colour = "black")) +
   #ggtitle("Citizen Science, Worries and Precautions") +
   #theme(plot.title = element_text(size = 12, face = "bold",hjust = 0.5)) +
+  scale_y_continuous(limits = c(0,100), expand = c(0, 0)) +
   theme(legend.position = "none")
 
 p2 <- ggplot(data = results_precautions, aes(x = fct_rev(variable) , y = percent, fill = value)) +
@@ -112,6 +113,7 @@ p2 <- ggplot(data = results_precautions, aes(x = fct_rev(variable) , y = percent
         panel.grid.minor = element_blank(),
         panel.background = element_blank(), 
         axis.line = element_line(colour = "black")) +
+  scale_y_continuous(limits = c(0,100), expand = c(0, 0)) +
   theme(legend.position = "none")
 
 gp1 <- ggplotGrob(p1)
