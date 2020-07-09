@@ -221,7 +221,7 @@ res_lonely$Category <- factor(res_lonely$Category, levels=c("All", "Gender", "Ag
 q <- ggplot(data = res_lonely, aes(x = reorder(Strata, percent), y = percent, fill = barcolor)) +
   facet_grid(~Category, scale = "free", space = "free") +
   geom_bar(stat="identity", width = 0.7) +
-  xlab("Isolation") +
+  ylab("Proportion with high loneliness") +
   theme(axis.title=element_text(size=8,face="bold"),
         axis.text.x = element_text(angle = 30, hjust = 1),
         axis.title.x=element_blank(),
@@ -243,7 +243,7 @@ q <- ggplot(data = res_lonely, aes(x = reorder(Strata, percent), y = percent, fi
 #scale_x_discrete(labels=c("All"=expression(bold("All")), parse=TRUE))
 
 
-pdf("C:/Users/vrw657/Documents/Projects/Corona_SJPH/DK_plots/DK_stratified_loneliness.pdf", width = 6, height = 3)
+pdf("C:/Users/vrw657/Documents/Projects/Corona_SJPH/DK_plots/DK_stratified_loneliness.pdf", width = 9, height = 2.6)
 q
 dev.off()
 
