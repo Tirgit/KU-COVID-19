@@ -9,7 +9,7 @@ res_lonely$Category <- factor(res_lonely$Category, levels=c("All", "Gender", "Ag
                                                             "Education", "Chronic disease",
                                                             "Mental illness"))
 
-#loneliness plot
+# loneliness plot
 q <- ggplot(data = res_lonely, aes(x = reorder(Strata, percent), y = percent, fill = barcolor)) +
   facet_grid(~Category, scale = "free", space = "free") +
   geom_bar(stat="identity", width = 0.7) +
@@ -72,7 +72,7 @@ varorder <- results_time$week
 results_time$week <- factor(results_time$week,
                             levels=varorder)
 
-#multichoice plot
+# time plot
 p <- ggplot(data = results_time, aes(x = week , y = percent, fill = "red")) +
   geom_bar(stat="identity", width = 0.7) +
   ylab("Proportion with high anxiety") + 

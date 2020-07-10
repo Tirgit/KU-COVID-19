@@ -84,7 +84,7 @@ results_worries <- results_yes[1:8,]
 results_precautions <- results_yes[9:14,]
 
 # barplots
-p1 <- ggplot(data = results_worries, aes(x = fct_rev(variable) , y = percent, fill = value)) +
+p1 <- ggplot(data = results_worries, aes(x = forcats::fct_rev(variable) , y = percent, fill = value)) +
   geom_bar(stat="identity", width = 0.7) +
   coord_flip() +
   xlab("Worries") +
@@ -102,7 +102,7 @@ p1 <- ggplot(data = results_worries, aes(x = fct_rev(variable) , y = percent, fi
   scale_y_continuous(limits = c(0,100), expand = c(0, 0)) +
   theme(legend.position = "none")
 
-p2 <- ggplot(data = results_precautions, aes(x = fct_rev(variable) , y = percent, fill = value)) +
+p2 <- ggplot(data = results_precautions, aes(x = forcats::fct_rev(variable) , y = percent, fill = value)) +
   geom_bar(stat="identity", width = 0.7) +
   coord_flip() +
   ylab("Percentage") + 
