@@ -38,7 +38,7 @@ q <- ggplot(data = res_lonely, aes(x = reorder(Strata, percent), y = percent, fi
 #scale_x_discrete(labels=c("All"=expression(bold("All")), parse=TRUE))
 
 
-pdf("FR_stratified_loneliness.pdf", width = 6, height = 3)
+pdf("FR_stratified_loneliness.pdf", width = 9, height = 2.6)
 q
 dev.off()
 
@@ -133,7 +133,7 @@ p <- ggplot(data = results_time, aes(x = week, y = mean_worry)) +
   geom_errorbar(aes(ymin=mean_worry-sd_worry, ymax=mean_worry+sd_worry), width=.2) +
   #scale_x_date(date_labels="%d %b",date_breaks  ="3 day") + 
   theme(axis.title=element_text(size=8,face="bold"),
-        axis.text.x = element_text(angle = 30, hjust = 1),
+        axis.text.x = element_text(angle = 90, hjust = 1),
         axis.title.x=element_blank(),
         axis.ticks.x=element_blank(),
         plot.title = element_text(hjust = 0.5),
