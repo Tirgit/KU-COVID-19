@@ -215,13 +215,14 @@ res_lonely$Category <- as.factor(res_lonely$Category)
 res_lonely$Category <- factor(res_lonely$Category, levels=c("All", "Gender", "Age", 
                                                             "Education", "Chronic disease",
                                                             "Mental illness"))
-
+res_lonely <- cbind(res_lonely, correctorder = c(0,0,1,2,1,0,2,1,0,0,1,0,1))
+saveRDS(res_lonely, "C:/Users/vrw657/Documents/Projects/Corona_SJPH/Data/DK_lonely.rds")
 
 #loneliness plot
-q <- ggplot(data = res_lonely, aes(x = reorder(Strata, percent), y = percent, fill = barcolor)) +
+q <- ggplot(data = res_lonely, aes(x = reorder(Strata, correctorder), y = percent, fill = barcolor)) +
   facet_grid(~Category, scale = "free", space = "free") +
   geom_bar(stat="identity", width = 0.7) +
-  ylab("Proportion with high loneliness") +
+  ylab("Percentage with high loneliness") +
   theme(axis.title=element_text(size=8,face="bold"),
         axis.text.x = element_text(angle = 30, hjust = 1),
         axis.title.x=element_blank(),

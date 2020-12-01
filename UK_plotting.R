@@ -8,12 +8,14 @@ res_lonely <- read_excel("UK_loneliness.xlsx")
 res_lonely$Category <- factor(res_lonely$Category, levels=c("All", "Gender", "Age", 
                                                             "Education", "Chronic disease",
                                                             "Mental illness"))
+res_lonely <- cbind(res_lonely, correctorder = c(0,0,1,0,1,2,0,1,2,1,0,1,0))
+saveRDS(res_lonely, "C:/Users/vrw657/Documents/Projects/Corona_SJPH/Data/UK_lonely.rds")
 
 # loneliness plot
-q <- ggplot(data = res_lonely, aes(x = reorder(Strata, percent), y = percent, fill = barcolor)) +
+q <- ggplot(data = res_lonely, aes(x = reorder(Strata, correctorder), y = percent, fill = barcolor)) +
   facet_grid(~Category, scale = "free", space = "free") +
   geom_bar(stat="identity", width = 0.7) +
-  ylab("Proportion with high loneliness") +
+  ylab("Percentage with high loneliness") +
   theme(axis.title=element_text(size=8,face="bold"),
         axis.text.x = element_text(angle = 30, hjust = 1),
         axis.title.x=element_blank(),
@@ -75,7 +77,7 @@ results_time$week <- factor(results_time$week,
 # time plot
 p <- ggplot(data = results_time, aes(x = week , y = percent, fill = "red")) +
   geom_bar(stat="identity", width = 0.7) +
-  ylab("Proportion with high anxiety") + 
+  ylab("Percentage with high anxiety") + 
   xlab("") +
   theme(axis.text=element_text(size=8),
         axis.title=element_text(size=8,face="bold"),
