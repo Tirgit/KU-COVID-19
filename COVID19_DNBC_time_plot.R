@@ -90,8 +90,9 @@ table(DNBC_worries$Week)
 results <- DNBC_worries %>%
   group_by(Week) %>%
   summarise(mean_worry = mean(Worried),
-            sd_worry = sd(Worried),
-            n = n())
+            n = n(),
+            lci_worry = mean_worry - 1.96*(sd(Worried)/sqrt(n)),
+            uci_worry = mean_worry + 1.96*(sd(Worried)/sqrt(n)))
 
 
 # plotting

@@ -46,6 +46,9 @@ dev.off()
 
 # load NL multichoice data
 results <- read_excel("NL_multichoice.xlsx")
+results$percent_uCI <- results$percent + 1.96*(sqrt((results$percent*(100-results$percent))/results$countT))
+results$percent_lCI <- results$percent - 1.96*(sqrt((results$percent*(100-results$percent))/results$countT))
+
 results_worries <- results[1:7,]
 results_precautions <- results[8:14,]
 varorder <- results_worries$variable
@@ -58,6 +61,7 @@ results_precautions$variable <- factor(results_precautions$variable,
 #multichoice plot
 p1 <- ggplot(data = results_worries, aes(x = forcats::fct_rev(variable) , y = percent, fill = value)) +
   geom_bar(stat="identity", width = 0.7) +
+  geom_errorbar(aes(ymin=percent_lCI, ymax=percent_uCI), width=.2) +
   coord_flip() +
   xlab("Worries") +
   theme(axis.text=element_text(size=8),
@@ -76,6 +80,7 @@ p1 <- ggplot(data = results_worries, aes(x = forcats::fct_rev(variable) , y = pe
 
 p2 <- ggplot(data = results_precautions, aes(x = forcats::fct_rev(variable) , y = percent, fill = value)) +
   geom_bar(stat="identity", width = 0.7) +
+  geom_errorbar(aes(ymin=percent_lCI, ymax=percent_uCI), width=.2) +
   coord_flip() +
   ylab("Percentage") + 
   xlab("Precautions") +
@@ -108,10 +113,13 @@ results_time <- read_excel("NL_time.xlsx")
 varorder <- results_time$week
 results_time$week <- factor(results_time$week,
                             levels=varorder)
-results_time$Date <- c("2020-03-30", "2020-04-02", "2020-04-12",
-                       "2020-04-16", "2020-04-19", "2020-04-28",
-                       "2020-05-15")
-results_time$Date <- as.Date(results_time$Date)
+
+results_time$n <- c(44076,43012,38363,36761,35553,32935,31822)
+results_time$worry_lCI <- results_time$mean_worry - 1.96*(results_time$sd_worry/sqrt(results_time$n))
+results_time$worry_uCI <- results_time$mean_worry + 1.96*(results_time$sd_worry/sqrt(results_time$n))
+
+results_time$n <- NULL
+results_time$sd_worry <- NULL
 
 q <- ggplot(data = results_time, aes(x = week, y = mean_worry)) +
   geom_point() +

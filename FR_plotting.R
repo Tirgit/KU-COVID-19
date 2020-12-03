@@ -47,6 +47,9 @@ dev.off()
 
 # load FR multichoice data
 results <- read_excel("FR_multichoice_TEMPO.xlsx")
+results$percent_uCI <- results$percent + 1.96*(sqrt((results$percent*(100-results$percent))/results$countT))
+results$percent_lCI <- results$percent - 1.96*(sqrt((results$percent*(100-results$percent))/results$countT))
+
 results_worries <- results[1:7,]
 results_precautions <- results[8:13,]
 varorder <- results_worries$variable
@@ -59,6 +62,7 @@ results_precautions$variable <- factor(results_precautions$variable,
 #multichoice plot
 p1 <- ggplot(data = results_worries, aes(x = forcats::fct_rev(variable) , y = percent, fill = value)) +
   geom_bar(stat="identity", width = 0.7) +
+  geom_errorbar(aes(ymin=percent_lCI, ymax=percent_uCI), width=.2) +
   coord_flip() +
   xlab("Worries") +
   theme(axis.text=element_text(size=8),
@@ -77,6 +81,7 @@ p1 <- ggplot(data = results_worries, aes(x = forcats::fct_rev(variable) , y = pe
 
 p2 <- ggplot(data = results_precautions, aes(x = forcats::fct_rev(variable) , y = percent, fill = value)) +
   geom_bar(stat="identity", width = 0.7) +
+  geom_errorbar(aes(ymin=percent_lCI, ymax=percent_uCI), width=.2) +
   coord_flip() +
   ylab("Percentage") + 
   xlab("Precautions") +
@@ -116,13 +121,22 @@ results_time$sd_worry <- NA
 # calculate weighted mean and sd
 for (i in 1:7) {
 vec <- c(rep(1, results_time$a1[i]), 
-         rep(2, results_time$a2[i]),
-         rep(3, results_time$a3[i]),
-         rep(4, results_time$a4[i]),
-         rep(5, results_time$a5[i]))
+         rep(3.25, results_time$a2[i]),
+         rep(5.5, results_time$a3[i]),
+         rep(7.75, results_time$a4[i]),
+         rep(10, results_time$a5[i]))
 results_time$mean_worry[i] <- mean(vec)
 results_time$sd_worry[i] <- sd(vec)
 }
+
+results_time$n <- results_time$a1 + results_time$a2 + results_time$a3 + results_time$a4 + results_time$a5
+results_time$worry_lCI <- results_time$mean_worry - 1.96*(results_time$sd_worry/sqrt(results_time$n))
+results_time$worry_uCI <- results_time$mean_worry + 1.96*(results_time$sd_worry/sqrt(results_time$n))
+
+results_time$n <- NULL
+results_time$sd_worry <- NULL
+
+
 
 results_time$Date <- c("2020-03-31", "2020-04-07", "2020-04-14",
                        "2020-04-21", "2020-05-05", "2020-05-19",

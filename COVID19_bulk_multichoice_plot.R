@@ -80,12 +80,17 @@ results <- d_con_melt %>%
 # keeping only Yes lines (No's are redundant as we are interested in percentages)
 results_yes <- results[results$value == "Yes",] 
 
+results_yes$percent_uCI <- results_yes$percent + 1.96*(sqrt((results_yes$percent*(100-results_yes$percent))/results_yes$countT))
+results_yes$percent_lCI <- results_yes$percent - 1.96*(sqrt((results_yes$percent*(100-results_yes$percent))/results_yes$countT))
+
+
 results_worries <- results_yes[1:8,]
 results_precautions <- results_yes[9:14,]
 
 # barplots
 p1 <- ggplot(data = results_worries, aes(x = forcats::fct_rev(variable) , y = percent, fill = value)) +
   geom_bar(stat="identity", width = 0.7) +
+  geom_errorbar(aes(ymin=percent_lCI, ymax=percent_uCI), width=.2) +
   coord_flip() +
   xlab("Worries") +
   theme(axis.text=element_text(size=8),
@@ -104,6 +109,7 @@ p1 <- ggplot(data = results_worries, aes(x = forcats::fct_rev(variable) , y = pe
 
 p2 <- ggplot(data = results_precautions, aes(x = forcats::fct_rev(variable) , y = percent, fill = value)) +
   geom_bar(stat="identity", width = 0.7) +
+  geom_errorbar(aes(ymin=percent_lCI, ymax=percent_uCI), width=.2) +
   coord_flip() +
   ylab("Percentage") + 
   xlab("Precautions") +

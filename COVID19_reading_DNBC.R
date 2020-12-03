@@ -15,6 +15,13 @@ library(stats)
 # merging 3 datasets
 W1 <- readRDS("P:/DNBC_W1.rds")
 
+# narrow down to youth / mothers
+# youth
+# W1 <- W1[W1$Besvarelse_type == 2,]
+# mothers
+# W1 <- W1[W1$Besvarelse_type == 1,]
+
+
 varkeep <- c("H_alder", "H002", "H017", "H048_1", 
              "H048_2", "H048_3", "H048_4", "H048_5", 
              "H048_6", "H048_7", "H048_8", "H048_9A", 

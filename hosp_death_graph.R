@@ -76,7 +76,7 @@ p <- ggplot(corona, aes(x = Date, y = Hospitalization)) +
         axis.title.y.right = element_text(color = "#0072B2"))
 
 
-pdf("Comp_plots/pred_year_DK.pdf", width = 9, height = 3)
+pdf("Comp_plots/pred_year_DK.pdf", width = 9, height = 2.4)
 p
 dev.off()
   
@@ -114,7 +114,7 @@ p <- ggplot(corona, aes(x = Date, y = Hospitalization)) +
         axis.title.y.right = element_text(color = "#0072B2"))
 
 
-pdf("Comp_plots/pred_year_NL.pdf", width = 9, height = 3)
+pdf("Comp_plots/pred_year_NL.pdf", width = 9, height = 2.4)
 p
 dev.off()
 
@@ -151,7 +151,7 @@ p <- ggplot(corona, aes(x = Date, y = Hospitalization)) +
         axis.title.y = element_text(color = "#E69F00"),
         axis.title.y.right = element_text(color = "#0072B2"))
 
-pdf("Comp_plots/pred_year_UK.pdf", width = 9, height = 3)
+pdf("Comp_plots/pred_year_UK.pdf", width = 9, height = 2.4)
 p
 dev.off()
 
@@ -200,7 +200,7 @@ p <- ggplot(corona, aes(x = Date, y = Hospitalization)) +
         axis.title.y = element_text(color = "#E69F00"),
         axis.title.y.right = element_text(color = "#0072B2"))
 
-pdf("Comp_plots/pred_year_FR.pdf", width = 9, height = 3)
+pdf("Comp_plots/pred_year_FR.pdf", width = 9, height = 2.4)
 p
 dev.off()
 

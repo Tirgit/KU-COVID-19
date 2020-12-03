@@ -124,8 +124,13 @@ d_pop_selected$Worried <- as.numeric(d_pop_selected$Worried)
 # calculating proportions
 results <- d_pop_selected %>%
   group_by(Date) %>%
-  summarise(mean_worry = wtd.mean(Worried, Weights),
-            sd_worry = sqrt(wtd.var(Worried)))
+  summarise(n = n(),
+            mean_worry = wtd.mean(Worried, Weights),
+            sd_worry = sqrt(wtd.var(Worried)),
+            lci_worry = mean_worry - 1.96*(sd_worry/sqrt(n)),
+            uci_worry = mean_worry + 1.96*(sd_worry/sqrt(n)))
+results$sd_worry <- NULL
+results$n <- NULL
 
 p <- ggplot(data = results, aes(x = Date, y = mean_worry)) +
   geom_point() +

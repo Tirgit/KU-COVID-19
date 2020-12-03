@@ -52,7 +52,8 @@ q <- ggplot(data = all, aes(x= Strata, y = percent, fill = correctorder)) +
   scale_y_continuous(limits = c(0,30), expand = c(0, 0)) +
   #theme(plot.title = element_text(size = 12, face = "bold",hjust = 0.5)) +
   theme(legend.position = "none") +
-  theme(strip.text.x = element_text(size = 7))
+  theme(strip.text.x = element_blank(),
+        strip.background.x = element_blank())
 
 
 pdf("C:/Users/vrw657/Documents/Projects/Corona_SJPH/Comp_plots/gender_stratified_loneliness.pdf", width = 9, height = 2)
@@ -79,8 +80,8 @@ q <- ggplot(data = all, aes(x= reorder(Strata, correctorder), y = percent, fill 
   scale_y_continuous(limits = c(0,35), expand = c(0, 0)) +
   #theme(plot.title = element_text(size = 12, face = "bold",hjust = 0.5)) +
   theme(legend.position = "none") +
-  theme(strip.text.x = element_text(size = 7))
-#scale_x_discrete(labels=c("All"=expression(bold("All")), parse=TRUE))
+  theme(strip.text.x = element_blank(),
+        strip.background.x = element_blank())
 
 
 pdf("C:/Users/vrw657/Documents/Projects/Corona_SJPH/Comp_plots/age_stratified_loneliness.pdf", width = 9, height = 2)
@@ -107,8 +108,8 @@ q <- ggplot(data = all, aes(x= reorder(Strata, correctorder), y = percent, fill 
   scale_y_continuous(limits = c(0,30), expand = c(0, 0)) +
   #theme(plot.title = element_text(size = 12, face = "bold",hjust = 0.5)) +
   theme(legend.position = "none") +
-  theme(strip.text.x = element_text(size = 7))
-#scale_x_discrete(labels=c("All"=expression(bold("All")), parse=TRUE))
+  theme(strip.text.x = element_blank(),
+        strip.background.x = element_blank())
 
 
 pdf("C:/Users/vrw657/Documents/Projects/Corona_SJPH/Comp_plots/educ_stratified_loneliness.pdf", width = 9, height = 2)
@@ -136,8 +137,8 @@ q <- ggplot(data = all, aes(x= reorder(Strata, correctorder), y = percent, fill 
   scale_y_continuous(limits = c(0,30), expand = c(0, 0)) +
   #theme(plot.title = element_text(size = 12, face = "bold",hjust = 0.5)) +
   theme(legend.position = "none") +
-  theme(strip.text.x = element_text(size = 7))
-#scale_x_discrete(labels=c("All"=expression(bold("All")), parse=TRUE))
+  theme(strip.text.x = element_blank(),
+        strip.background.x = element_blank())
 
 
 pdf("C:/Users/vrw657/Documents/Projects/Corona_SJPH/Comp_plots/chronic_stratified_loneliness.pdf", width = 9, height = 2)
@@ -165,8 +166,8 @@ q <- ggplot(data = all, aes(x= reorder(Strata, correctorder), y = percent, fill 
   scale_y_continuous(limits = c(0,50), expand = c(0, 0)) +
   #theme(plot.title = element_text(size = 12, face = "bold",hjust = 0.5)) +
   theme(legend.position = "none") +
-  theme(strip.text.x = element_text(size = 7))
-#scale_x_discrete(labels=c("All"=expression(bold("All")), parse=TRUE))
+  theme(strip.text.x = element_blank(),
+        strip.background.x = element_blank())
 
 
 pdf("C:/Users/vrw657/Documents/Projects/Corona_SJPH/Comp_plots/mental_stratified_loneliness.pdf", width = 9, height = 2)

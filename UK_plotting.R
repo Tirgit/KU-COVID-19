@@ -46,10 +46,14 @@ results_worries <- read_excel("UK_multichoice.xlsx")
 varorder <- results_worries$variable
 results_worries$variable <- factor(results_worries$variable,
                                    levels=varorder)
+results_worries$percent_uCI <- results_worries$percent + 1.96*(sqrt((results_worries$percent*(100-results_worries$percent))/results_worries$countT))
+results_worries$percent_lCI <- results_worries$percent - 1.96*(sqrt((results_worries$percent*(100-results_worries$percent))/results_worries$countT))
+
 
 #multichoice plot
 p <- ggplot(data = results_worries, aes(x = forcats::fct_rev(variable) , y = percent, fill = value)) +
   geom_bar(stat="identity", width = 0.7) +
+  geom_errorbar(aes(ymin=percent_lCI, ymax=percent_uCI), width=.2) +
   coord_flip() +
   ylab("Percentage") + 
   xlab("Worries") +
@@ -74,9 +78,17 @@ varorder <- results_time$week
 results_time$week <- factor(results_time$week,
                             levels=varorder)
 
+results_time$countT <- c(27752,	27948,	38846,	39384,	38465,	37242,	
+                      36443,	36583,	34576,	33012,	31887,	30618,	29731)
+
+results_time$percent_uCI <- results_time$percent + 1.96*(sqrt((results_time$percent*(100-results_time$percent))/results_time$countT))
+results_time$percent_lCI <- results_time$percent - 1.96*(sqrt((results_time$percent*(100-results_time$percent))/results_time$countT))
+
+
 # time plot
 p <- ggplot(data = results_time, aes(x = week , y = percent, fill = "red")) +
   geom_bar(stat="identity", width = 0.7) +
+  geom_errorbar(aes(ymin=percent_lCI, ymax=percent_uCI), width=.2) +
   ylab("Percentage with high anxiety") + 
   xlab("") +
   theme(axis.text=element_text(size=8),
@@ -88,7 +100,15 @@ p <- ggplot(data = results_time, aes(x = week , y = percent, fill = "red")) +
         axis.line = element_line(colour = "black")) +
   theme(legend.position = "none") +
   scale_y_continuous(limits = c(0,30), expand = c(0, 0)) +
-  theme(plot.margin=unit(c(0.3,0.1,0.1,2),"cm"))
+  theme(plot.margin=unit(c(0.3,0.1,0.1,2),"cm")) +
+  theme(
+    panel.background = element_rect(fill = "transparent"), # bg of the panel
+    plot.background = element_rect(fill = "transparent", color = NA), # bg of the plot
+    panel.grid.major = element_blank(), # get rid of major grid
+    panel.grid.minor = element_blank(), # get rid of minor grid
+    legend.background = element_rect(fill = "transparent"), # get rid of legend bg
+    legend.box.background = element_rect(fill = "transparent") # get rid of legend panel bg
+  )
 
 
 pdf("C:/Users/vrw657/Documents/Projects/Corona_SJPH/UK_plots/UK_anxiety_time.pdf", width = 9, height = 3)
