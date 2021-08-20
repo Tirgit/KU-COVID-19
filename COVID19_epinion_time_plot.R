@@ -134,7 +134,7 @@ results$n <- NULL
 
 p <- ggplot(data = results, aes(x = Date, y = mean_worry)) +
   geom_point() +
-  geom_errorbar(aes(ymin=mean_worry-sd_worry, ymax=mean_worry+sd_worry), width=.2) +
+  geom_errorbar(aes(ymin=lci_worry, ymax=uci_worry), width=.2) +
   scale_x_date(date_labels="%d %b",date_breaks  ="3 day") + 
   theme(axis.title=element_text(size=8,face="bold"),
         axis.text.x = element_text(angle = 45, hjust = 1),
